@@ -36,6 +36,8 @@ public class Assets extends AssetManager {
 
         this.addAsset(key, BitmapFont.class, generator.generateFont(parameter));
         generator.dispose();
+
+        parameter.size /= ratio;
     }
 
     public float getRatio() {

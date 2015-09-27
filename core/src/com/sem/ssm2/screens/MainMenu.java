@@ -77,11 +77,21 @@ public class MainMenu extends GameScreen {
         button.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                System.out.println("Do something");
+            }
+        });
+
+        TextButton collectibleButton = new TextButton("Collection", buttonStyle);
+        collectibleButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
                 game.setScreen(SettingsScreen.class);
+                System.out.println("test");
             }
         });
 
         group.addActor(button);
+        group.addActor(collectibleButton);
         group.setFillParent(true);
         stage.addActor(group);
     }
@@ -132,6 +142,7 @@ public class MainMenu extends GameScreen {
 
     @Override
     public void hide() {
+        stage.dispose();
         inputMultiplexer.removeProcessor(stage);
     }
 

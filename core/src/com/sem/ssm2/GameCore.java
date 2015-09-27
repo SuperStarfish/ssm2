@@ -8,6 +8,7 @@ import com.sem.ssm2.assets.Assets;
 import com.sem.ssm2.screens.GameScreen;
 import com.sem.ssm2.screens.LoadingScreen;
 import com.sem.ssm2.screens.MainMenu;
+import com.sem.ssm2.screens.SettingsScreen;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -27,7 +28,7 @@ public class GameCore extends Game {
 		temp.loadAssets();
 		assets.finishLoading();
 		storedScreens.put(LoadingScreen.class.getName(), temp);
-		setScreen(MainMenu.class);
+		setScreen(SettingsScreen.class);
 	}
 
 	public void setScreen(Class<? extends GameScreen> screen) {
