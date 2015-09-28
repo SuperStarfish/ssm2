@@ -6,16 +6,14 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.badlogic.gdx.utils.Align;
 import com.sem.ssm2.GameCore;
 import com.sem.ssm2.SimpleDirectionGestureDetector;
@@ -115,7 +113,7 @@ public class SettingsScreen extends GameScreen {
 
         table = new Table();
         stage.addActor(table);
-        stage.setDebugAll(true);
+        stage.setDebugAll(false);
         table.setFillParent(true);
 
         Table header = new Table();
@@ -234,6 +232,32 @@ public class SettingsScreen extends GameScreen {
                 "Group 18"};
         groups.setItems(coll);
 
+        pixmap = new Pixmap(9,9, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.BLACK);
+        pixmap.fill();
+        pixmap.setColor(Color.YELLOW);
+        int size = pixmap.getWidth() - 1;
+        pixmap.drawLine(0, 0, 0, size);
+        pixmap.drawLine(size, 0, size, size);
+        pixmap.drawLine(0, 0, size, 0);
+        pixmap.drawLine(0, size, size, size);
+        Image image = new Image(new Texture(pixmap));
+        image.setPosition(60, 60);
+        stage.addActor(image);
+
+        NinePatch ninePatch = new NinePatch(new Texture(pixmap), 3, 3, 3, 3);
+
+        NinePatchDrawable ninePatchDrawable = new NinePatchDrawable(ninePatch);
+        ninePatchDrawable.setLeftWidth(15);
+        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle(
+                new NinePatchDrawable(ninePatch),
+                ninePatchDrawable,
+                new BaseDrawable(),
+                assets.get("buttonFont", BitmapFont.class)
+        );
+
+
+        subHeader.add(new TextButton("Test", style));
 
     }
 
