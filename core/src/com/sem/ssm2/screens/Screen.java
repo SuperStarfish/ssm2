@@ -17,6 +17,8 @@ public interface Screen {
 
     void hide ();
 
+//    Class<? extends Screen> previousScreen();
+
     void unloadAssets();
 
     void dispose ();

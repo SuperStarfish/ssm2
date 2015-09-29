@@ -89,7 +89,7 @@ public class CollectionScreen extends GameScreen {
     public void loadAssets() {
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 80;
-        assets.generateFont("regular", "fonts/OpenSans-Regular.ttf", parameter);
+        assets.generateFont("regular", "fonts/NotoSans-Regular.ttf", parameter);
         assets.generateFont("white_buttonFont", "fonts/Blenda Script.otf", parameter);
         assets.load("images/FishA.png", Texture.class);
         assets.load("images/FishB.png", Texture.class);
@@ -146,7 +146,7 @@ public class CollectionScreen extends GameScreen {
                 assets.get("white_buttonFont", BitmapFont.class)
         );
 
-        final Label.LabelStyle labelStyle = new Label.LabelStyle(assets.get("regular", BitmapFont.class), Color.RED);
+        final Label.LabelStyle labelStyle = new Label.LabelStyle(assets.get("regular", BitmapFont.class), Color.WHITE);
 
         indexLabel = new Label(tabs[index], labelStyle);
 

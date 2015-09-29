@@ -117,6 +117,7 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
     @Override
     public void resize(int width, int height) {
         if(screen != null) screen.resize(width, height);
+        System.out.println(height);
     }
 
     @Override

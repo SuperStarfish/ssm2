@@ -44,6 +44,7 @@ public class AndroidLauncher extends AndroidApplication {
 		cSensorManager = (SensorManager) this.getSystemService(SENSOR_SERVICE);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		config.useWakelock = true;
+		config.useImmersiveMode = true;
 		initialize(new Game(
                     new AndroidAccelerationStatus(cSensorManager),
                     new AndroidNotificationController(this),
