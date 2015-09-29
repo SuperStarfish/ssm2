@@ -6,20 +6,20 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.sem.ssm2.GameCore;
+import com.sem.ssm2.Game;
 
-public class LoadingScreen extends GameScreen{
+public class LoadingScreen extends GameScreen {
+
+    public LoadingScreen(Game game) {
+        super(game);
+    }
 
     private SpriteBatch batch;
     private BitmapFont loadingFont;
     GlyphLayout layout;
 
-    public LoadingScreen(GameCore game) {
-        super(game);
-    }
-
     @Override
-    public void createAssets() {
+    public void loadAssets() {
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 100;
         assets.generateFont("default", "fonts/Blenda Script.otf", parameter);
@@ -72,6 +72,11 @@ public class LoadingScreen extends GameScreen{
 
     @Override
     public void hide() {
+
+    }
+
+    @Override
+    public void unloadAssets() {
 
     }
 

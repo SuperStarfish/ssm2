@@ -2,25 +2,19 @@ package com.sem.ssm2.assets;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 public class Assets extends AssetManager {
-    private static Assets instance;
 
     private final float DEV_HEIGHT = 1920f;
     private float ratio;
 
 
-    private Assets() {
+    public Assets() {
         ratio = Gdx.graphics.getHeight() / DEV_HEIGHT;
-    }
-
-    public static synchronized Assets getInstance() {
-        if(instance == null) {
-            instance = new Assets();
-        }
-        return instance;
+        Texture.setAssetManager(this);
     }
 
     public void generateFont(String key, String fontFile) {

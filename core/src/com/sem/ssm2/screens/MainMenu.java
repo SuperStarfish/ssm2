@@ -1,5 +1,6 @@
 package com.sem.ssm2.screens;
 
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -15,13 +16,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
-import com.sem.ssm2.GameCore;
+import com.sem.ssm2.Game;
+import com.sem.ssm2.server.database.Response;
+import com.sem.ssm2.server.database.ResponseHandler;
 
 public class MainMenu extends GameScreen {
-
-    public MainMenu(GameCore game) {
-        super(game);
-    }
 
     SpriteBatch batch;
     Texture background;
@@ -29,18 +28,21 @@ public class MainMenu extends GameScreen {
     float rotation = 0, addition = 0.008f;
     Stage stage;
 
+    public MainMenu(Game game) {
+        super(game);
+    }
 
     @Override
-    protected void createAssets() {
+    public void loadAssets() {
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 124;
         parameter.borderColor = Color.BLACK;
         parameter.borderWidth = 1;
-        assets.generateFont("titleFont", "fonts/Quicksand-BoldItalic.otf", parameter);
         parameter.color = new Color(71 / 255f, 37 / 255f, 2 / 255f, 1);
+        assets.generateFont("titleFont", "fonts/Quicksand-BoldItalic.otf", parameter);
         parameter.size = 80;
         parameter.borderWidth = 0;
-        assets.generateFont("buttonFont", "fonts/Blenda Script.otf", parameter);
+        assets.generateFont("brown_buttonFont", "fonts/Blenda Script.otf", parameter);
         assets.load("images/lightrays.png", Texture.class);
         assets.load("images/button.png", Texture.class);
         assets.load("images/button_pressed.png", Texture.class);
@@ -54,6 +56,14 @@ public class MainMenu extends GameScreen {
         stage = new Stage();
         inputMultiplexer.addProcessor(stage);
         createUI();
+        client.setIp("192.168.2.5");
+        client.connectToRemoteServer();
+        client.getPlayerData(new ResponseHandler() {
+            @Override
+            public void handleResponse(Response response) {
+                System.out.println("test");
+            }
+        });
     }
 
     public void createUI() {
@@ -71,8 +81,9 @@ public class MainMenu extends GameScreen {
                 new SpriteDrawable(sprite),
                 new SpriteDrawable(sprite2),
                 new SpriteDrawable(sprite2),
-                assets.get("buttonFont", BitmapFont.class)
+                assets.get("brown_buttonFont", BitmapFont.class)
         );
+
         TextButton button = new TextButton("Stroll", buttonStyle);
         button.addListener(new ChangeListener() {
             @Override
@@ -85,8 +96,7 @@ public class MainMenu extends GameScreen {
         collectibleButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.setScreen(SettingsScreen.class);
-                System.out.println("test");
+                game.setScreen(CollectionScreen.class);
             }
         });
 
@@ -142,12 +152,17 @@ public class MainMenu extends GameScreen {
 
     @Override
     public void hide() {
-        stage.dispose();
         inputMultiplexer.removeProcessor(stage);
+    }
+
+    @Override
+    public void unloadAssets() {
+
     }
 
     @Override
     public void dispose() {
 
     }
+
 }

@@ -15,14 +15,14 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.badlogic.gdx.utils.Align;
-import com.sem.ssm2.GameCore;
-import com.sem.ssm2.SimpleDirectionGestureDetector;
+import com.sem.ssm2.Game;
+import com.sem.ssm2.util.SwipeDetector;
 
 import java.util.Random;
 
+public class CollectionScreen extends GameScreen {
 
-public class SettingsScreen extends GameScreen {
-    public SettingsScreen(GameCore game) {
+    public CollectionScreen(Game game) {
         super(game);
     }
 
@@ -40,8 +40,8 @@ public class SettingsScreen extends GameScreen {
     ScrollPane body;
     Cell<ScrollPane> cell;
 
-    SimpleDirectionGestureDetector swiper = new SimpleDirectionGestureDetector(
-            new SimpleDirectionGestureDetector.DirectionListener() {
+    SwipeDetector swiper = new SwipeDetector(
+            new SwipeDetector.DirectionListener() {
         @Override
         public void onLeft() {
             if(index < tabs.length - 1) {
@@ -78,13 +78,12 @@ public class SettingsScreen extends GameScreen {
         }
     }
 
-
     @Override
-    protected void createAssets() {
+    public void loadAssets() {
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 80;
         assets.generateFont("regular", "fonts/OpenSans-Regular.ttf", parameter);
-        assets.generateFont("buttonFont", "fonts/Blenda Script.otf", parameter);
+        assets.generateFont("white_buttonFont", "fonts/Blenda Script.otf", parameter);
     }
 
     @Override
@@ -133,7 +132,7 @@ public class SettingsScreen extends GameScreen {
                 new BaseDrawable(),
                 new BaseDrawable(),
                 new BaseDrawable(),
-                assets.get("buttonFont", BitmapFont.class)
+                assets.get("white_buttonFont", BitmapFont.class)
         );
 
         Label.LabelStyle labelStyle = new Label.LabelStyle(assets.get("regular", BitmapFont.class), Color.RED);
@@ -241,9 +240,6 @@ public class SettingsScreen extends GameScreen {
         pixmap.drawLine(size, 0, size, size);
         pixmap.drawLine(0, 0, size, 0);
         pixmap.drawLine(0, size, size, size);
-        Image image = new Image(new Texture(pixmap));
-        image.setPosition(60, 60);
-        stage.addActor(image);
 
         NinePatch ninePatch = new NinePatch(new Texture(pixmap), 3, 3, 3, 3);
 
@@ -253,12 +249,11 @@ public class SettingsScreen extends GameScreen {
                 new NinePatchDrawable(ninePatch),
                 ninePatchDrawable,
                 new BaseDrawable(),
-                assets.get("buttonFont", BitmapFont.class)
+                assets.get("white_buttonFont", BitmapFont.class)
         );
 
 
         subHeader.add(new TextButton("Test", style));
-
     }
 
     @Override
@@ -267,6 +262,7 @@ public class SettingsScreen extends GameScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act();
         stage.draw();
+
     }
 
     @Override
@@ -292,7 +288,13 @@ public class SettingsScreen extends GameScreen {
     }
 
     @Override
+    public void unloadAssets() {
+
+    }
+
+    @Override
     public void dispose() {
 
     }
 }
+
