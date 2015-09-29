@@ -16,19 +16,12 @@ public abstract class LocalStorageResolver {
      */
     protected static final Logger LOGGER = Logger.getLogger(LocalStorageResolver.class.getSimpleName());
 
-    /**
-     * Query that creates a 'User' table, if it does not exist.
-     */
-    protected String cUserTable = "CREATE TABLE IF NOT EXISTS 'User' (Key INTEGER PRIMARY KEY NOT NULL UNIQUE, "
-            + "Id TEXT NOT NULL UNIQUE, Username TEXT DEFAULT 'Unknown',"
-            + " Interval INTEGER, Stroll INTEGER, GroupId TEXT NULL);";
+    protected String playerTable = "create table if not exists player (id text primary key not null, " +
+            "username varchar default 'Anonymous', last_stroll datetime default (datetime('now', '-5 days')));";
 
-    /**
-     * Query that creates a 'Collectible' table, if it does not exist.
-     */
-    protected String cCollectibleTable = "CREATE TABLE IF NOT EXISTS 'Collectible' (Key INTEGER PRIMARY KEY NOT NULL, "
-            + "OwnerId TEXT, Type TEXT NOT NULL, Hue REAL NOT NULL, Amount INTEGER NOT NULL, "
-            + "Date DATE NOT NULL, GroupId INTEGER);";
+    protected String collectionTable = "create table if not exists collection " +
+            "(key integer primary key autoincrement, type text not null, hue real not null, amount int default 1, " +
+            "last_entry datetime default (datetime('now')))";
 
     /**
      * The database connection. This can be used to make queries on. Child class determines how this connection
@@ -61,7 +54,7 @@ public abstract class LocalStorageResolver {
         }
 
         if (cResetDBs) {
-            dropDatabase("User", "Collectible", "Group", "Event_Hosts");
+            dropDatabase("player", "collection");
         }
 
         for (String table : createDatabases()) {

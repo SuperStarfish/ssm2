@@ -1,6 +1,6 @@
-package com.sem.ssm2.server.database.query;
+package com.sem.ssm2.server.database.query.temp;
 
-import com.sem.ssm2.structures.PlayerData;
+import com.sem.ssm2.server.database.query.Query;
 
 import java.io.Serializable;
 import java.sql.Connection;
@@ -11,38 +11,38 @@ import java.sql.SQLException;
 /**
  * Object that will retrieve user data from the server with the given id.
  */
-public class RequestPlayerData extends Query {
+public class RequestGroupId extends Query {
 
     /**
      * The PlayerData constructed from given id. Will be filled and returned.
      */
-    protected PlayerData cPlayerData;
+    protected String cId;
 
     /**
      * Constructor for the request.
      *
      * @param id The id of the player to be retrieved.
      */
-    public RequestPlayerData(final String id) {
-        cPlayerData = new PlayerData(id);
+    public RequestGroupId(final String id) {
+        cId = id;
     }
 
     @Override
     public Serializable query(final Connection databaseConnection) throws SQLException {
-        new MakePlayerEntry(cPlayerData.getId()).query(databaseConnection);
+        String result = null;
 
-        String preparedQuery = "SELECT * FROM User WHERE ID = ? LIMIT 1";
+        String preparedQuery = "SELECT GroupId FROM User WHERE ID = ?";
+
         try (PreparedStatement statement = databaseConnection.prepareStatement(preparedQuery)) {
-            statement.setString(1, cPlayerData.getId());
+            statement.setString(1, cId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    cPlayerData.setUsername(resultSet.getString("Username"));
-                    cPlayerData.setIntervalTimestamp(resultSet.getInt("Interval"));
-                    cPlayerData.setStrollTimestamp(resultSet.getInt("Stroll"));
+                    result = resultSet.getString("GroupId");
                 }
             }
             statement.close();
         }
-        return cPlayerData;
+
+        return result;
     }
 }

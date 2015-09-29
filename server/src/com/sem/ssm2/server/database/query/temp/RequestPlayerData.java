@@ -1,4 +1,7 @@
-package com.sem.ssm2.server.database.query;
+package com.sem.ssm2.server.database.query.temp;
+
+import com.sem.ssm2.server.database.query.Query;
+import com.sem.ssm2.structures.PlayerData;
 
 import java.io.Serializable;
 import java.sql.Connection;
@@ -9,38 +12,38 @@ import java.sql.SQLException;
 /**
  * Object that will retrieve user data from the server with the given id.
  */
-public class RequestGroupId extends Query {
+public class RequestPlayerData extends Query {
 
     /**
      * The PlayerData constructed from given id. Will be filled and returned.
      */
-    protected String cId;
+    protected PlayerData cPlayerData;
 
     /**
      * Constructor for the request.
      *
      * @param id The id of the player to be retrieved.
      */
-    public RequestGroupId(final String id) {
-        cId = id;
+    public RequestPlayerData(final String id) {
+        cPlayerData = new PlayerData(id);
     }
 
     @Override
     public Serializable query(final Connection databaseConnection) throws SQLException {
-        String result = null;
+        new MakePlayerEntry(cPlayerData.getId()).query(databaseConnection);
 
-        String preparedQuery = "SELECT GroupId FROM User WHERE ID = ?";
-
+        String preparedQuery = "SELECT * FROM User WHERE ID = ? LIMIT 1";
         try (PreparedStatement statement = databaseConnection.prepareStatement(preparedQuery)) {
-            statement.setString(1, cId);
+            statement.setString(1, cPlayerData.getId());
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    result = resultSet.getString("GroupId");
+                    cPlayerData.setUsername(resultSet.getString("Username"));
+                    cPlayerData.setIntervalTimestamp(resultSet.getInt("Interval"));
+                    cPlayerData.setStrollTimestamp(resultSet.getInt("Stroll"));
                 }
             }
             statement.close();
         }
-
-        return result;
+        return cPlayerData;
     }
 }

@@ -52,6 +52,21 @@ public class CollectibleFactory {
      * @param hue     The color of the collectible.
      * @param amount  The amount of fish of this collectible.
      * @param date    The date that this collectible was found.
+     * @return The collectible.
+     */
+    public final Collectible generateCollectible(final String type, final float hue, final int amount,
+                                                 final Date date) {
+        return generateCollectible(type, hue, amount, date, "Yours");
+    }
+
+    /**
+     * Constructs a new collectible.
+     * This method in for the construction by the client and server to retrieve the data and make a new object.
+     *
+     * @param type    The type of collectible to construct.
+     * @param hue     The color of the collectible.
+     * @param amount  The amount of fish of this collectible.
+     * @param date    The date that this collectible was found.
      * @param ownerId The owner of the collectible.
      * @return The collectible.
      */

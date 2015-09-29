@@ -1,6 +1,6 @@
 package com.sem.ssm2.server;
 
-import com.sem.ssm2.server.database.query.EventHostCleaner;
+import com.sem.ssm2.server.database.query.temp.EventHostCleaner;
 import com.sem.ssm2.server.database.query.Query;
 import com.sem.ssm2.util.IpResolver;
 import com.sem.ssm2.util.StaticsCaller;

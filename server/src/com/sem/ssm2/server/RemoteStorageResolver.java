@@ -45,6 +45,6 @@ public class RemoteStorageResolver extends LocalStorageResolver {
 
     @Override
     public String[] createDatabases() {
-        return new String[]{cRemoteUserTable, cCollectibleTable, cEventHostsTable, cGroupTable};
+        return new String[]{cRemoteUserTable, cEventHostsTable, cGroupTable};
     }
 }

@@ -1,6 +1,5 @@
 package com.sem.ssm2.screens;
 
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -12,13 +11,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.sem.ssm2.Game;
-import com.sem.ssm2.server.database.Response;
-import com.sem.ssm2.server.database.ResponseHandler;
 
 public class MainMenu extends GameScreen {
 
@@ -38,8 +37,8 @@ public class MainMenu extends GameScreen {
         parameter.size = 124;
         parameter.borderColor = Color.BLACK;
         parameter.borderWidth = 1;
-        parameter.color = new Color(71 / 255f, 37 / 255f, 2 / 255f, 1);
         assets.generateFont("titleFont", "fonts/Quicksand-BoldItalic.otf", parameter);
+        parameter.color = new Color(71 / 255f, 37 / 255f, 2 / 255f, 1);
         parameter.size = 80;
         parameter.borderWidth = 0;
         assets.generateFont("brown_buttonFont", "fonts/Blenda Script.otf", parameter);
@@ -56,14 +55,6 @@ public class MainMenu extends GameScreen {
         stage = new Stage();
         inputMultiplexer.addProcessor(stage);
         createUI();
-        client.setIp("192.168.2.5");
-        client.connectToRemoteServer();
-        client.getPlayerData(new ResponseHandler() {
-            @Override
-            public void handleResponse(Response response) {
-                System.out.println("test");
-            }
-        });
     }
 
     public void createUI() {
@@ -84,6 +75,15 @@ public class MainMenu extends GameScreen {
                 assets.get("brown_buttonFont", BitmapFont.class)
         );
 
+        Label.LabelStyle labelStyle = new Label.LabelStyle(
+                assets.get("titleFont", BitmapFont.class),
+                Color.YELLOW
+        );
+
+        Label label = new Label("Super StarFish\nMania", labelStyle);
+        label.setAlignment(Align.center);
+        group.addActor(label);
+
         TextButton button = new TextButton("Stroll", buttonStyle);
         button.addListener(new ChangeListener() {
             @Override
@@ -100,8 +100,17 @@ public class MainMenu extends GameScreen {
             }
         });
 
+        TextButton settingsButton = new TextButton("Settings", buttonStyle);
+        collectibleButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+
+            }
+        });
+
         group.addActor(button);
         group.addActor(collectibleButton);
+        group.addActor(settingsButton);
         group.setFillParent(true);
         stage.addActor(group);
     }

@@ -1,5 +1,6 @@
-package com.sem.ssm2.server.database.query;
+package com.sem.ssm2.server.database.query.temp;
 
+import com.sem.ssm2.server.database.query.Query;
 import com.sem.ssm2.structures.collection.collectibles.Collectible;
 
 import java.io.Serializable;
@@ -9,7 +10,7 @@ import java.sql.SQLException;
 /**
  * Adds a new collectible to the server.
  */
-public class AddCollectible extends Query {
+public class RemoveCollectible extends Query {
 
     /**
      * Id of the group the collectible belongs to.
@@ -26,7 +27,7 @@ public class AddCollectible extends Query {
      * @param collectible The collectible to update.
      * @param groupId     Id of the group the collectible belongs to.
      */
-    public AddCollectible(final Collectible collectible, final String groupId) {
+    public RemoveCollectible(final Collectible collectible, final String groupId) {
         cCollectible = collectible;
         cGroupId = groupId;
     }
@@ -34,12 +35,7 @@ public class AddCollectible extends Query {
     @Override
     public Serializable query(final Connection connection) throws SQLException {
         int amount = new GetCollectibleAmount(cCollectible, cGroupId).query(connection);
-        if (amount == 0) {
-            new InsertCollectible(cCollectible, cGroupId).query(connection);
-        } else {
-            amount += cCollectible.getAmount();
-            new SetCollectibleAmount(cCollectible, cGroupId, amount).query(connection);
-        }
+        new SetCollectibleAmount(cCollectible, cGroupId, amount - cCollectible.getAmount()).query(connection);
 
         return null;
     }

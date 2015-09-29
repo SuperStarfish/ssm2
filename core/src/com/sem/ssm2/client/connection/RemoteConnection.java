@@ -37,6 +37,8 @@ public final class RemoteConnection implements Connection {
      */
     protected ConcurrentLinkedQueue<ConnectionPacket> cBuffer;
 
+    protected Client client;
+
     /**
      * Attempts to create a new connection with the server. Fails after cConnectionTimeOut milliseconds.
      *
@@ -44,7 +46,8 @@ public final class RemoteConnection implements Connection {
      * @param port The port to connect to.
      * @throws IOException Exception if connection fails.
      */
-    public RemoteConnection(final String ip, final int port) throws IOException {
+    public RemoteConnection(Client client, final String ip, final int port) throws IOException {
+        this.client = client;
         cConnection = new Socket(ip, port);
         cOutputStream = new ObjectOutputStream(cConnection.getOutputStream());
         cInputStream = new ObjectInputStream(cConnection.getInputStream());
@@ -92,7 +95,7 @@ public final class RemoteConnection implements Connection {
             cOutputStream.writeObject(connectionPacket.getQuery());
             cOutputStream.flush();
             final Response response = (Response) cInputStream.readObject();
-            Client.getInstance().addPostRunnables(new Runnable() {
+            client.addPostRunnable(new Runnable() {
                 @Override
                 public void run() {
                     if (connectionPacket.getResponseHandler() != null) {
@@ -101,7 +104,7 @@ public final class RemoteConnection implements Connection {
                 }
             });
         } catch(SocketException e) {
-            Client.getInstance().setRemoteConnection(new UnConnected());
+            client.setRemoteConnection(new UnConnected(client));
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -113,7 +116,7 @@ public final class RemoteConnection implements Connection {
     public void disconnect() {
         try {
             cConnection.close();
-            Client.getInstance().setRemoteConnection(new UnConnected());
+            client.setRemoteConnection(new UnConnected(client));
         } catch (IOException e) {
             e.printStackTrace();
         }

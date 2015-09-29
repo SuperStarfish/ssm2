@@ -16,6 +16,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.badlogic.gdx.utils.Align;
 import com.sem.ssm2.Game;
+import com.sem.ssm2.server.database.Response;
+import com.sem.ssm2.server.database.ResponseHandler;
+import com.sem.ssm2.structures.collection.Collection;
+import com.sem.ssm2.structures.collection.collectibles.Collectible;
+import com.sem.ssm2.util.CollectibleDrawer;
 import com.sem.ssm2.util.SwipeDetector;
 
 import java.util.Random;
@@ -39,6 +44,8 @@ public class CollectionScreen extends GameScreen {
     List<String> groups;
     ScrollPane body;
     Cell<ScrollPane> cell;
+
+    CollectibleDrawer collectibleDrawer;
 
     SwipeDetector swiper = new SwipeDetector(
             new SwipeDetector.DirectionListener() {
@@ -84,6 +91,9 @@ public class CollectionScreen extends GameScreen {
         parameter.size = 80;
         assets.generateFont("regular", "fonts/OpenSans-Regular.ttf", parameter);
         assets.generateFont("white_buttonFont", "fonts/Blenda Script.otf", parameter);
+        assets.load("images/FishA.png", Texture.class);
+        assets.load("images/FishB.png", Texture.class);
+        assets.load("images/FishC.png", Texture.class);
     }
 
     @Override
@@ -91,6 +101,7 @@ public class CollectionScreen extends GameScreen {
         stage = new Stage();
         inputMultiplexer.addProcessor(swiper);
         inputMultiplexer.addProcessor(stage);
+        collectibleDrawer = new CollectibleDrawer(assets);
 
         Pixmap pixmap = new Pixmap(4,4, Pixmap.Format.RGBA8888);
 
@@ -135,7 +146,7 @@ public class CollectionScreen extends GameScreen {
                 assets.get("white_buttonFont", BitmapFont.class)
         );
 
-        Label.LabelStyle labelStyle = new Label.LabelStyle(assets.get("regular", BitmapFont.class), Color.RED);
+        final Label.LabelStyle labelStyle = new Label.LabelStyle(assets.get("regular", BitmapFont.class), Color.RED);
 
         indexLabel = new Label(tabs[index], labelStyle);
 
@@ -191,6 +202,28 @@ public class CollectionScreen extends GameScreen {
         Random random = new Random();
 
         list = new Table();
+
+        client.getLocalCollection(new ResponseHandler() {
+            @Override
+            public void handleResponse(Response response) {
+                Collection collection = (Collection)response.getData();
+
+                for(Collectible collectible : collection) {
+                    Sprite sprite = collectibleDrawer.drawCollectible(collectible);
+                    System.out.println(sprite.getWidth() + ", " + sprite.getHeight());
+                    sprite.setSize(
+                            sprite.getTexture().getWidth() / 1.2f * assets.getRatio(),
+                            sprite.getTexture().getHeight() / 1.2f * assets.getRatio()
+                    );
+                    System.out.println(sprite.getHeight());
+                    list.add(new Image(new SpriteDrawable(sprite)));
+                    list.add(new Label(collectible.getOwnerId(), labelStyle)).expandX();
+                    list.add(new Label(">", labelStyle)).pad(10);
+                    list.row();
+                }
+            }
+        });
+
         for(int i = 1; i <= 30; i++) {
             pixmap1.setColor(new Color(random.nextFloat(), random.nextFloat(), random.nextFloat(), 1));
             pixmap1.fillCircle(128, 128, 50);

@@ -25,10 +25,15 @@ public class UnConnected implements Connection {
      */
     protected boolean cConnecting;
 
+    protected int reconnectDelay = 2000;
+
+    protected Client client;
+
     /**
      * Creates a new state where the Client is Unconnected.
      */
-    public UnConnected() {
+    public UnConnected(Client client) {
+        this.client = client;
         cConnecting = false;
     }
 
@@ -69,8 +74,8 @@ public class UnConnected implements Connection {
         cConnecting = true;
         try {
             LOGGER.info("Trying to connect to the local server");
-            Connection connection = new LocalConnection(ip, port);
-            Client.getInstance().setLocalConnection(connection);
+            Connection connection = new LocalConnection(client, ip, port);
+            client.setLocalConnection(connection);
         } catch (IOException e) {
             LOGGER.info("Connection failed!");
         }
@@ -87,11 +92,10 @@ public class UnConnected implements Connection {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final Client client = Client.getInstance();
                 try {
                     LOGGER.info("Trying to connect to the remote server");
-                    final Connection connection = new RemoteConnection(ip, port);
-                    client.addPostRunnables(new Runnable() {
+                    final Connection connection = new RemoteConnection(client, ip, port);
+                    client.addPostRunnable(new Runnable() {
                         @Override
                         public void run() {
                             client.setRemoteConnection(connection);
@@ -99,14 +103,25 @@ public class UnConnected implements Connection {
                         }
                     });
                 } catch (IOException e) {
-                    LOGGER.info("Failed to connect to remote server, retrying.");
                     cConnecting = false;
-                    client.addPostRunnables(new Runnable() {
-                        @Override
-                        public void run() {
-                            client.connectToRemoteServer();
+                    LOGGER.info("Failed to connect to remote server (" + ip + ":" + port + ").");
+
+                    if(client.retryRemoteConnection()){
+                        try {
+                            Thread.sleep(reconnectDelay);
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
                         }
-                    });
+
+                        client.addPostRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                client.connectToRemoteServer();
+                            }
+                        });
+                    }
+
+
                 }
             }
         }).start();

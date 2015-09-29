@@ -1,5 +1,6 @@
-package com.sem.ssm2.server.database.query;
+package com.sem.ssm2.server.database.query.temp;
 
+import com.sem.ssm2.server.database.query.Query;
 import com.sem.ssm2.structures.PlayerData;
 import com.sem.ssm2.structures.groups.Group;
 import com.sem.ssm2.structures.groups.GroupData;

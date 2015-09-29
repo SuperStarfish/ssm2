@@ -1,6 +1,5 @@
 package com.sem.ssm2;
 
-
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -12,7 +11,9 @@ import com.sem.ssm2.screens.LoadingScreen;
 import com.sem.ssm2.screens.MainMenu;
 import com.sem.ssm2.screens.Screen;
 import com.sem.ssm2.server.LocalStorageResolver;
-import com.sem.ssm2.server.Server;
+import com.sem.ssm2.server.database.Response;
+import com.sem.ssm2.server.database.ResponseHandler;
+import com.sem.ssm2.structures.collection.Collection;
 import com.sem.ssm2.util.AccelerationStatus;
 import com.sem.ssm2.util.NotificationController;
 
@@ -47,11 +48,9 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
         storedScreens = new HashMap<>();
         assets = new Assets();
 
-        Server server = new Server(localStorageResolver);
-        server.start();
-        client = new Client();
-        client.setUserIDResolver(userIDResolver);
-        client.connectToLocalServer(server.getSocketPort());
+        client = new Client(userIDResolver, localStorageResolver);
+        client.setRemoteIP("82.169.19.191");
+        client.setRemotePort(56789);
         client.connectToRemoteServer();
 
         Texture.setAssetManager(assets);
@@ -61,6 +60,15 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
         assets.finishLoading();
         storedScreens.put(LoadingScreen.class.getName(), loadingScreen);
         setScreen(MainMenu.class);
+
+        client.getLocalCollection(new ResponseHandler() {
+            @Override
+            public void handleResponse(Response response) {
+                Collection collection = (Collection)response.getData();
+                System.out.println(collection);
+            }
+        });
+
     }
 
     public void setScreen(Class<? extends Screen> newScreen) {
@@ -114,15 +122,15 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
     @Override
     public void render() {
         if(screen != null) screen.render(Gdx.graphics.getDeltaTime());
-        for (Runnable toRunBeforeNextCycle : Client.getInstance().getPostRunnables()) {
+        for (Runnable toRunBeforeNextCycle : client.getPostRunnables()) {
             Gdx.app.postRunnable(toRunBeforeNextCycle);
         }
-        Client.getInstance().resetPostRunnables();
+        client.resetPostRunnables();
     }
 
     @Override
     public void pause() {
-        if(screen != null) screen.hide();
+        if(screen != null) screen.pause();
     }
 
     @Override

@@ -26,6 +26,9 @@ public class Collection extends HashSet<Collectible> implements Serializable {
      */
     protected Subject cChangeAddSubject;
 
+    public Collection(){
+        this("internal");
+    }
 
     /**
      * Constructs a HashSet collection to store collectibles gained by the player.

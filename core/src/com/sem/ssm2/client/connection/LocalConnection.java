@@ -1,5 +1,6 @@
 package com.sem.ssm2.client.connection;
 
+import com.sem.ssm2.client.Client;
 import com.sem.ssm2.server.database.Response;
 import com.sem.ssm2.server.database.ResponseHandler;
 import com.sem.ssm2.server.database.query.Query;
@@ -30,6 +31,8 @@ public final class LocalConnection implements Connection {
      */
     protected boolean cAcceptingRequest;
 
+    protected Client client;
+
     /**
      * Attempts to create a new connection with the server. Fails after cConnectionTimeOut milliseconds.
      *
@@ -37,7 +40,8 @@ public final class LocalConnection implements Connection {
      * @param port The port to connect to.
      * @throws IOException Exception if connection fails.
      */
-    public LocalConnection(final String ip, final int port) throws IOException {
+    public LocalConnection(Client client, final String ip, final int port) throws IOException {
+        this.client = client;
         cConnection = new Socket(ip, port);
         cOutputStream = new ObjectOutputStream(cConnection.getOutputStream());
         cOutputStream.flush();
@@ -80,6 +84,7 @@ public final class LocalConnection implements Connection {
     public void disconnect() {
         try {
             cConnection.close();
+            client.setLocalConnection(new UnConnected(client));
         } catch (IOException e) {
             e.printStackTrace();
         }
