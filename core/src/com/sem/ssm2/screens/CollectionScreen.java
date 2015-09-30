@@ -86,6 +86,11 @@ public class CollectionScreen extends GameScreen {
     }
 
     @Override
+    public Class<? extends Screen> previousScreen() {
+        return MainMenu.class;
+    }
+
+    @Override
     public void loadAssets() {
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 80;

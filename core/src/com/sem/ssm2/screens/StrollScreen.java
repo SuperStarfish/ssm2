@@ -22,6 +22,11 @@ public class StrollScreen extends GameScreen {
     float elapsedTime;
 
     @Override
+    public Class<? extends Screen> previousScreen() {
+        return MainMenu.class;
+    }
+
+    @Override
     public void loadAssets() {
         assets.load("images/world.png", Texture.class);
         assets.load("images/walking_guy.png", Texture.class);

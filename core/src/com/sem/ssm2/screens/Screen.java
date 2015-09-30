@@ -3,6 +3,8 @@ package com.sem.ssm2.screens;
 
 public interface Screen {
 
+    Class<? extends Screen> previousScreen();
+
     void loadAssets();
 
     void show ();
@@ -16,8 +18,6 @@ public interface Screen {
     void resume ();
 
     void hide ();
-
-//    Class<? extends Screen> previousScreen();
 
     void unloadAssets();
 

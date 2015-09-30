@@ -10,12 +10,12 @@ import com.sem.ssm2.client.UserIDResolver;
 import com.sem.ssm2.screens.LoadingScreen;
 import com.sem.ssm2.screens.MainMenu;
 import com.sem.ssm2.screens.Screen;
-import com.sem.ssm2.screens.StrollScreen;
 import com.sem.ssm2.server.LocalStorageResolver;
 import com.sem.ssm2.server.database.Response;
 import com.sem.ssm2.server.database.ResponseHandler;
 import com.sem.ssm2.structures.collection.Collection;
 import com.sem.ssm2.util.AccelerationStatus;
+import com.sem.ssm2.util.BackButtonListener;
 import com.sem.ssm2.util.NotificationController;
 
 import java.lang.reflect.InvocationTargetException;
@@ -43,6 +43,7 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
     protected HashMap<String, Screen> storedScreens;
     protected Screen queuedScreen;
     protected Client client;
+    protected boolean setPreviousScreen = false;
 
     @Override
     public void create() {
@@ -55,7 +56,11 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
         client.connectToRemoteServer();
 
         Texture.setAssetManager(assets);
-        Gdx.input.setInputProcessor(new InputMultiplexer());
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        Gdx.input.setCatchBackKey(true);
+        multiplexer.addProcessor(new BackButtonListener(this));
+        Gdx.input.setInputProcessor(multiplexer);
+
         LoadingScreen loadingScreen = new LoadingScreen(this);
         loadingScreen.loadAssets();
         assets.finishLoading();
@@ -97,6 +102,10 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
         }
     }
 
+    public void setPreviousScreen() {
+        setPreviousScreen = true;
+    }
+
     public void setQueuedScreen() {
         if(queuedScreen != null) {
             setScreen(queuedScreen);
@@ -128,6 +137,15 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
             Gdx.app.postRunnable(toRunBeforeNextCycle);
         }
         client.resetPostRunnables();
+        if(setPreviousScreen) {
+            setPreviousScreen = false;
+            Class<? extends Screen> previousScreen = screen.previousScreen();
+            if(previousScreen == null) {
+                Gdx.app.exit();
+            } else {
+                setScreen(screen.previousScreen());
+            }
+        }
     }
 
     @Override

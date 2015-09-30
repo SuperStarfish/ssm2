@@ -19,6 +19,11 @@ public class LoadingScreen extends GameScreen {
     GlyphLayout layout;
 
     @Override
+    public Class<? extends Screen> previousScreen() {
+        return null;
+    }
+
+    @Override
     public void loadAssets() {
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 100;
