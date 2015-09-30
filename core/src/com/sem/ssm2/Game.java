@@ -7,13 +7,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.sem.ssm2.assets.Assets;
 import com.sem.ssm2.client.Client;
 import com.sem.ssm2.client.UserIDResolver;
-import com.sem.ssm2.screens.LoadingScreen;
-import com.sem.ssm2.screens.MainMenu;
-import com.sem.ssm2.screens.Screen;
+import com.sem.ssm2.screens.*;
 import com.sem.ssm2.server.LocalStorageResolver;
-import com.sem.ssm2.server.database.Response;
-import com.sem.ssm2.server.database.ResponseHandler;
-import com.sem.ssm2.structures.collection.Collection;
 import com.sem.ssm2.util.AccelerationStatus;
 import com.sem.ssm2.util.BackButtonListener;
 import com.sem.ssm2.util.NotificationController;
@@ -51,8 +46,6 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
         assets = new Assets();
 
         client = new Client(userIDResolver, localStorageResolver);
-        client.setRemoteIP("82.169.19.191");
-        client.setRemotePort(56789);
         client.connectToRemoteServer();
 
         Texture.setAssetManager(assets);
@@ -66,14 +59,6 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
         assets.finishLoading();
         storedScreens.put(LoadingScreen.class.getName(), loadingScreen);
         setScreen(MainMenu.class);
-
-        client.getLocalCollection(new ResponseHandler() {
-            @Override
-            public void handleResponse(Response response) {
-                Collection collection = (Collection)response.getData();
-                System.out.println(collection);
-            }
-        });
 
     }
 
@@ -127,7 +112,6 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
     @Override
     public void resize(int width, int height) {
         if(screen != null) screen.resize(width, height);
-        System.out.println(height);
     }
 
     @Override

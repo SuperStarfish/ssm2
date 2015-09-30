@@ -11,6 +11,7 @@ import com.sem.ssm2.server.database.ResponseHandler;
 import com.sem.ssm2.server.database.query.GetLocalCollection;
 import com.sem.ssm2.server.database.query.GetPlayerData;
 import com.sem.ssm2.server.database.query.Ping;
+import com.sem.ssm2.server.database.query.SetStrollTime;
 import com.sem.ssm2.structures.PlayerData;
 import com.sem.ssm2.structures.Subject;
 
@@ -49,9 +50,10 @@ public class Client {
         localConnection.send(new GetPlayerData(userIDResolver.getID()), new ResponseHandler() {
             @Override
             public void handleResponse(Response response) {
-
+                playerData = (PlayerData) response.getData();
             }
         });
+
     }
 
 
@@ -65,9 +67,20 @@ public class Client {
     |*********
     \*/
     public void getLocalCollection(ResponseHandler responseHandler) {
-        localConnection.send(new GetLocalCollection(), responseHandler);
+        localConnection.send(new GetLocalCollection(false), responseHandler);
     }
 
+    public void getLocalCollection(boolean random, int limit, ResponseHandler responseHandler) {
+        localConnection.send(new GetLocalCollection(random, limit), responseHandler);
+    }
+
+    public void getPlayerData(ResponseHandler responseHandler) {
+        localConnection.send(new GetPlayerData(userIDResolver.getID()), responseHandler);
+    }
+
+    public void updateStrollTime(long millis, ResponseHandler responseHandler) {
+        localConnection.send(new SetStrollTime(millis), responseHandler);
+    }
 
 
     /*-------

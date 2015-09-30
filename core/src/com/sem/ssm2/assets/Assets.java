@@ -32,6 +32,7 @@ public class Assets extends AssetManager {
         generator.dispose();
 
         parameter.size /= ratio;
+
     }
 
     public float getRatio() {

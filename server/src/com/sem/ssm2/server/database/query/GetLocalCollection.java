@@ -12,11 +12,24 @@ import java.util.Date;
 
 public class GetLocalCollection extends Query {
 
+    protected boolean random;
+    protected int limit = 10;
+
+    public GetLocalCollection(boolean random) {
+        this.random = random;
+    }
+
+    public GetLocalCollection(boolean random, int limit) {
+        this.random = random;
+        this.limit = limit;
+    }
+
     @Override
     public Serializable query(Connection databaseConnection) throws SQLException {
         Collection collection = new Collection();
 
         String preparedQuery = "SELECT * FROM collection";
+        if(random) preparedQuery += " ORDER BY RANDOM() LIMIT " + limit;
 
         try (PreparedStatement statement = databaseConnection.prepareStatement(preparedQuery)) {
             try (ResultSet resultSet = statement.executeQuery()) {

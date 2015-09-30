@@ -1,6 +1,7 @@
 package com.sem.ssm2.structures;
 
 import java.io.Serializable;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Contains all the data of the user.
@@ -39,6 +40,12 @@ public class PlayerData implements Serializable {
      */
     public PlayerData(final String id) {
         cId = id;
+    }
+
+    public PlayerData(String id, String username, long strollTimeStamp) {
+        cId = id;
+        cUsername = username;
+        cStrollTimestamp = strollTimeStamp;
     }
 
     /**
@@ -121,6 +128,18 @@ public class PlayerData implements Serializable {
      */
     public String getGroupId() {
         return cGroupId;
+    }
+
+    public String getUsername() {
+        return cUsername;
+    }
+
+    /**
+     * Time since last stroll
+     * @return
+     */
+    public int getElapsedTime() {
+        return (int)TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - cStrollTimestamp);
     }
 
     /**

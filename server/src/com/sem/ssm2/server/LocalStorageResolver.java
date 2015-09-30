@@ -17,7 +17,8 @@ public abstract class LocalStorageResolver {
     protected static final Logger LOGGER = Logger.getLogger(LocalStorageResolver.class.getSimpleName());
 
     protected String playerTable = "create table if not exists player (id text primary key not null, " +
-            "username varchar default 'Anonymous', last_stroll datetime default (datetime('now', '-5 days')));";
+            "username varchar default 'Anonymous', last_stroll bigint default ("
+            + (System.currentTimeMillis() - 1000 * 60 * 60 * 24) +"));";
 
     protected String collectionTable = "create table if not exists collection " +
             "(key integer primary key autoincrement, type text not null, hue real not null, amount int default 1, " +

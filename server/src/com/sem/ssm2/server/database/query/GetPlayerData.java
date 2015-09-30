@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 
 public class GetPlayerData extends Query {
 
@@ -26,12 +27,11 @@ public class GetPlayerData extends Query {
         try (PreparedStatement statement = databaseConnection.prepareStatement(query)) {
             try (ResultSet resultSet = statement.executeQuery()) {
                 if(resultSet.next()) {
-                    System.out.println(resultSet.getString("last_stroll"));
-//                    playerData = new PlayerData(
-//                            resultSet.getString("id"),
-//                            resultSet.getString("username"),
-//                            new DateTime(resultSet.getString("last_stroll"))
-//                    );
+                    playerData = new PlayerData(
+                            resultSet.getString("id"),
+                            resultSet.getString("username"),
+                            resultSet.getLong("last_stroll")
+                    );
                 } else {
                     return (new InsertPlayer(id)).query(databaseConnection);
                 }
