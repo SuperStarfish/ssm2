@@ -31,10 +31,10 @@ public class StrollScreen extends GameScreen {
     public void show() {
         elapsedTime = 0f;
         batch = new SpriteBatch();
+        Texture texture = assets.get("images/world.png", Texture.class);
         world = new TextureRegion(assets.get("images/world.png", Texture.class));
         TextureRegion[][] temp = TextureRegion.split(assets.get("images/walking_guy.png", Texture.class), 256, 256);
         animationFrames = new TextureRegion[4];
-
         int index = 0;
         for(int i = 0; i < 2; i++) {
             for(int j = 0; j < 2; j++) {
@@ -67,7 +67,18 @@ public class StrollScreen extends GameScreen {
                 1,
                 rotation);
         batch.draw(animation.getKeyFrame(elapsedTime),
-                Gdx.graphics.getWidth() / 2f - 128, 120);
+                Gdx.graphics.getWidth() / 2f - 128 * assets.getRatio(),
+                270 * assets.getRatio(),
+                0,
+                0,
+                256 * assets.getRatio(),
+                256 * assets.getRatio(),
+                1,
+                1,
+                0);
+
+//        batch.draw(animation.getKeyFrame(elapsedTime),
+//                Gdx.graphics.getWidth() / 2f - 128, 120 * assets.getRatio());
 
         rotation += rotationSpeed;
         batch.end();
