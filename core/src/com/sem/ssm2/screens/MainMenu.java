@@ -22,7 +22,7 @@ import com.sem.ssm2.Game;
 public class MainMenu extends GameScreen {
 
     SpriteBatch batch;
-    Texture background;
+    Texture background, rock1, kelp;
     TextureRegion region;
     float rotation = 0, addition = 0.008f;
     Stage stage;
@@ -45,12 +45,16 @@ public class MainMenu extends GameScreen {
         assets.load("images/lightrays.png", Texture.class);
         assets.load("images/button.png", Texture.class);
         assets.load("images/button_pressed.png", Texture.class);
+        assets.load("images/rock1.png", Texture.class);
+        assets.load("images/kelp.png", Texture.class);
     }
 
     @Override
     public void show() {
         batch = new SpriteBatch();
         background = assets.get("images/lightrays.png", Texture.class);
+        rock1 = assets.get("images/rock1.png", Texture.class);
+        kelp = assets.get("images/kelp.png", Texture.class);
         region = new TextureRegion(background);
         stage = new Stage();
         inputMultiplexer.addProcessor(stage);
@@ -88,7 +92,7 @@ public class MainMenu extends GameScreen {
         button.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                System.out.println("Do something");
+                game.setScreen(StrollScreen.class);
             }
         });
 
@@ -131,6 +135,18 @@ public class MainMenu extends GameScreen {
         Gdx.gl.glClearColor(59 / 255f, 179 / 255f, 1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
+        batch.draw(kelp,
+                630 * assets.getRatio(),
+                0,
+                kelp.getWidth() * assets.getRatio(),
+                kelp.getHeight() * assets.getRatio()
+        );
+        batch.draw(rock1,
+                700 * assets.getRatio(),
+                0,
+                rock1.getWidth() * assets.getRatio(),
+                rock1.getHeight() * assets.getRatio()
+                );
         batch.draw(region,
                 -167 * assets.getRatio(),
                 -85 * assets.getRatio(),

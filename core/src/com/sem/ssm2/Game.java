@@ -10,6 +10,7 @@ import com.sem.ssm2.client.UserIDResolver;
 import com.sem.ssm2.screens.LoadingScreen;
 import com.sem.ssm2.screens.MainMenu;
 import com.sem.ssm2.screens.Screen;
+import com.sem.ssm2.screens.StrollScreen;
 import com.sem.ssm2.server.LocalStorageResolver;
 import com.sem.ssm2.server.database.Response;
 import com.sem.ssm2.server.database.ResponseHandler;
