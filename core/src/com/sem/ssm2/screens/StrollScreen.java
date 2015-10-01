@@ -1,12 +1,23 @@
 package com.sem.ssm2.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Timer;
 import com.sem.ssm2.Game;
+import com.sem.ssm2.util.AccelerationState;
+
+import java.util.Observable;
+import java.util.Observer;
 
 public class StrollScreen extends GameScreen {
     public StrollScreen(Game game) {
@@ -16,10 +27,16 @@ public class StrollScreen extends GameScreen {
 
     protected SpriteBatch batch;
     protected TextureRegion world;
-    protected float rotation = 0, rotationSpeed = 0.05f;
+    protected float rotation = 0, rotationSpeed = 0;
     TextureRegion[] animationFrames;
     Animation animation;
     float elapsedTime;
+    protected boolean isMoving = false;
+    protected Label timerLabel;
+    protected int remainingTime = 300;
+    protected Stage stage;
+
+    Timer timer;
 
     @Override
     public Class<? extends Screen> previousScreen() {
@@ -30,13 +47,21 @@ public class StrollScreen extends GameScreen {
     public void loadAssets() {
         assets.load("images/world.png", Texture.class);
         assets.load("images/walking_guy.png", Texture.class);
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.borderWidth = 1;
+        int grayScale = 50;
+        parameter.borderColor = new Color(grayScale/255f, grayScale/255f, grayScale/255f, 1);
+        parameter.size = 120;
+        assets.generateFont("strollTimerFont", "fonts/Blenda Script.otf", parameter);
     }
 
     @Override
     public void show() {
         elapsedTime = 0f;
+        stage = new Stage();
+        inputMultiplexer.addProcessor(stage);
+
         batch = new SpriteBatch();
-        Texture texture = assets.get("images/world.png", Texture.class);
         world = new TextureRegion(assets.get("images/world.png", Texture.class));
         TextureRegion[][] temp = TextureRegion.split(assets.get("images/walking_guy.png", Texture.class), 256, 256);
         animationFrames = new TextureRegion[4];
@@ -50,6 +75,45 @@ public class StrollScreen extends GameScreen {
         animation = new Animation(1/4f, animationFrames);
         animation.setPlayMode(Animation.PlayMode.LOOP);
 
+        game.getAccelerationStatus().getSubject().addObserver(new Observer() {
+            @Override
+            public void update(Observable o, Object arg) {
+                AccelerationState accelerationState = (AccelerationState) arg;
+                System.out.println(accelerationState.toString() + " -> " + accelerationState.getRotationSpeed());
+                rotationSpeed = accelerationState.getRotationSpeed();
+                isMoving = accelerationState.isMoving();
+            }
+        });
+
+        Label.LabelStyle labelStyle = new Label.LabelStyle(assets.get("strollTimerFont", BitmapFont.class), Color.WHITE);
+
+        timerLabel = new Label(formattedTime(remainingTime), labelStyle);
+
+        timer = new Timer();
+        timer.scheduleTask(new Timer.Task() {
+            @Override
+            public void run() {
+                timerLabel.setText(formattedTime(--remainingTime));
+            }
+        }, 1, 1);
+
+        Table table = new Table();
+        table.setFillParent(true);
+        table.add(timerLabel).top().padTop(40 * assets.getRatio());
+        table.row();
+        table.add().fill().expand();
+        table.row();
+
+        stage.addActor(table);
+    }
+
+    public String formattedTime(int time) {
+        int minutes = (int)(time / 60f);
+        int seconds = time % 60;
+        if(seconds < 10)
+            return "" + minutes + ":0" + seconds;
+        else
+            return "" + minutes + ":" + seconds;
     }
 
     @Override
@@ -71,22 +135,36 @@ public class StrollScreen extends GameScreen {
                 1,
                 1,
                 rotation);
-        batch.draw(animation.getKeyFrame(elapsedTime),
-                Gdx.graphics.getWidth() / 2f - 128 * assets.getRatio(),
-                270 * assets.getRatio(),
-                0,
-                0,
-                256 * assets.getRatio(),
-                256 * assets.getRatio(),
-                1,
-                1,
-                0);
-
+        if(isMoving) {
+            batch.draw(animation.getKeyFrame(elapsedTime),
+                    Gdx.graphics.getWidth() / 2f - 128 * assets.getRatio(),
+                    270 * assets.getRatio(),
+                    0,
+                    0,
+                    256 * assets.getRatio(),
+                    256 * assets.getRatio(),
+                    1,
+                    1,
+                    0);
+        } else {
+            batch.draw(animation.getKeyFrame(0),
+                    Gdx.graphics.getWidth() / 2f - 128 * assets.getRatio(),
+                    270 * assets.getRatio(),
+                    0,
+                    0,
+                    256 * assets.getRatio(),
+                    256 * assets.getRatio(),
+                    1,
+                    1,
+                    0);
+        }
 //        batch.draw(animation.getKeyFrame(elapsedTime),
 //                Gdx.graphics.getWidth() / 2f - 128, 120 * assets.getRatio());
 
         rotation += rotationSpeed;
         batch.end();
+        stage.act();
+        stage.draw();
     }
 
     @Override
@@ -106,7 +184,7 @@ public class StrollScreen extends GameScreen {
 
     @Override
     public void hide() {
-
+        inputMultiplexer.removeProcessor(stage);
     }
 
     @Override

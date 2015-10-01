@@ -8,9 +8,16 @@ import com.sem.ssm2.desktop.util.DesktopIDResolver;
 import com.sem.ssm2.desktop.util.DesktopNotificationController;
 import com.sem.ssm2.desktop.util.DesktopStorageResolver;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.Scanner;
+
 public class DesktopLauncher {
 	public static void main (String[] arg) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+        LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.height = 960;
 		config.width = 540;
 		new LwjglApplication(new Game(

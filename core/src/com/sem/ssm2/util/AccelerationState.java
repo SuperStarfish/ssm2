@@ -5,23 +5,38 @@ package com.sem.ssm2.util;
  * Originally defined by the Accel Library Android authors.
  */
 public enum AccelerationState {
+
     /**
      * State which defines the accelerometer movement registered while resting.
      */
-    RESTING,
+    RESTING(0),
 
     /**
      * State which defines the accelerometer movement registered while walking.
      */
-    WALKING,
+    WALKING(0.05f),
 
     /**
      * State which defines the accelerometer movement registered while running.
      */
-    RUNNING,
+    RUNNING(0.1f),
 
     /**
      * State which defines the accelerometer movement registered while moving too fast.
      */
-    CHEATING
+    CHEATING(0);
+
+    private float rotationSpeed;
+
+    AccelerationState(float rotationSpeed){
+        this.rotationSpeed = rotationSpeed;
+    }
+
+    public float getRotationSpeed() {
+        return rotationSpeed;
+    }
+
+    public boolean isMoving() {
+        return rotationSpeed > 0f;
+    }
 }

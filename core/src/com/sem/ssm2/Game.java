@@ -9,6 +9,8 @@ import com.sem.ssm2.client.Client;
 import com.sem.ssm2.client.UserIDResolver;
 import com.sem.ssm2.screens.*;
 import com.sem.ssm2.server.LocalStorageResolver;
+import com.sem.ssm2.server.database.Response;
+import com.sem.ssm2.server.database.ResponseHandler;
 import com.sem.ssm2.util.AccelerationStatus;
 import com.sem.ssm2.util.BackButtonListener;
 import com.sem.ssm2.util.NotificationController;
@@ -58,6 +60,14 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
         loadingScreen.loadAssets();
         assets.finishLoading();
         storedScreens.put(LoadingScreen.class.getName(), loadingScreen);
+
+        client.updateStrollTime(0, new ResponseHandler() {
+            @Override
+            public void handleResponse(Response response) {
+                System.out.println("RESET TIMER");
+            }
+        });
+
         setScreen(MainMenu.class);
 
     }
@@ -157,6 +167,10 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
 
     public Client getClient() {
         return client;
+    }
+
+    public AccelerationStatus getAccelerationStatus() {
+        return accelerationStatus;
     }
 
 }
