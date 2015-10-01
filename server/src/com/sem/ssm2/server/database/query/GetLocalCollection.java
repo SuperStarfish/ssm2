@@ -44,6 +44,7 @@ public class GetLocalCollection extends Query {
                 }
             }
         }
+
         return collection;
     }
 }

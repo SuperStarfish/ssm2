@@ -33,6 +33,6 @@ public class AndroidStorageResolver extends LocalStorageResolver {
 
     @Override
     protected String[] createDatabases() {
-        return new String[]{playerTable, collectionTable};
+        return new String[]{playerTable, collectionTable, unsyncedCollectionTable};
     }
 }

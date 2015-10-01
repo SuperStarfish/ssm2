@@ -18,9 +18,14 @@ public abstract class LocalStorageResolver {
 
     protected String playerTable = "create table if not exists player (id text primary key not null, " +
             "username varchar default 'Anonymous', last_stroll bigint default ("
-            + (System.currentTimeMillis() - 1000 * 60 * 60 * 24) +"));";
+            + (System.currentTimeMillis() - 1000 * 60 * 60 * 24) +"), walking_time bigint default 0, " +
+            "running_time bigint default 0, number_of_strolls bigint default 0);";
 
     protected String collectionTable = "create table if not exists collection " +
+            "(key integer primary key autoincrement, type text not null, hue real not null, amount int default 1, " +
+            "last_entry datetime default (datetime('now')))";
+
+    protected String unsyncedCollectionTable = "create table if not exists unsynced_collection " +
             "(key integer primary key autoincrement, type text not null, hue real not null, amount int default 1, " +
             "last_entry datetime default (datetime('now')))";
 

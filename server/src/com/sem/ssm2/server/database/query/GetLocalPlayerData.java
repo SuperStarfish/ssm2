@@ -7,39 +7,44 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 
-public class GetPlayerData extends Query {
+public class GetLocalPlayerData extends Query {
 
     public String id;
 
-    public GetPlayerData(String id) {
+    public GetLocalPlayerData(String id) {
         this.id = id;
     }
 
     @Override
     public Serializable query(Connection databaseConnection) throws SQLException {
 
-        String query = "SELECT * FROM player";
+        String insertEntry = "insert or ignore into player (id) values (?);";
+
+        try (PreparedStatement statement = databaseConnection.prepareStatement(insertEntry)) {
+            statement.setString(1, id);
+            statement.execute();
+        }
+
+        String getEntry = "select * from player where id = ?;";
 
         PlayerData playerData = null;
 
-        try (PreparedStatement statement = databaseConnection.prepareStatement(query)) {
+        try (PreparedStatement statement = databaseConnection.prepareStatement(getEntry)) {
+            statement.setString(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if(resultSet.next()) {
                     playerData = new PlayerData(
                             resultSet.getString("id"),
                             resultSet.getString("username"),
-                            resultSet.getLong("last_stroll")
+                            resultSet.getLong("last_stroll"),
+                            resultSet.getLong("walking_time"),
+                            resultSet.getLong("running_time"),
+                            resultSet.getInt("number_of_strolls")
                     );
-                } else {
-                    return (new InsertPlayer(id)).query(databaseConnection);
                 }
-                resultSet.close();
             }
-            statement.close();
         }
         return playerData;
-
     }
 }

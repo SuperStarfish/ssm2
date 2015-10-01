@@ -33,6 +33,10 @@ public class PlayerData implements Serializable {
      */
     protected String cGroupId;
 
+    protected long walkingTime = 0, runningTime = 0;
+
+    protected int numberOfStrolls = 0;
+
     /**
      * A new UserData object containing the id for the current user.
      *
@@ -46,6 +50,16 @@ public class PlayerData implements Serializable {
         cId = id;
         cUsername = username;
         cStrollTimestamp = strollTimeStamp;
+    }
+
+    public PlayerData(String id, String username, long strollTimeStamp, long walkingTime, long runningTime,
+                      int numberOfStrolls) {
+        cId = id;
+        cUsername = username;
+        cStrollTimestamp = strollTimeStamp;
+        this.walkingTime = walkingTime;
+        this.runningTime = runningTime;
+        this.numberOfStrolls = numberOfStrolls;
     }
 
     /**
@@ -133,6 +147,19 @@ public class PlayerData implements Serializable {
     public String getUsername() {
         return cUsername;
     }
+
+    public long getWalkingTime() {
+        return walkingTime;
+    }
+
+    public long getRunningTime() {
+        return runningTime;
+    }
+
+    public int getNumberOfStrolls() {
+        return numberOfStrolls;
+    }
+
 
     /**
      * Time since last stroll

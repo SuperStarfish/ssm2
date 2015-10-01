@@ -8,10 +8,7 @@ import com.sem.ssm2.server.LocalStorageResolver;
 import com.sem.ssm2.server.Server;
 import com.sem.ssm2.server.database.Response;
 import com.sem.ssm2.server.database.ResponseHandler;
-import com.sem.ssm2.server.database.query.GetLocalCollection;
-import com.sem.ssm2.server.database.query.GetPlayerData;
-import com.sem.ssm2.server.database.query.Ping;
-import com.sem.ssm2.server.database.query.SetStrollTime;
+import com.sem.ssm2.server.database.query.*;
 import com.sem.ssm2.structures.PlayerData;
 import com.sem.ssm2.structures.Subject;
 
@@ -47,7 +44,7 @@ public class Client {
         internalServer.start();
         localConnection.connect(null, internalServer.getSocketPort());
 
-        localConnection.send(new GetPlayerData(userIDResolver.getID()), new ResponseHandler() {
+        localConnection.send(new GetLocalPlayerData(userIDResolver.getID()), new ResponseHandler() {
             @Override
             public void handleResponse(Response response) {
                 playerData = (PlayerData) response.getData();
@@ -75,11 +72,15 @@ public class Client {
     }
 
     public void getPlayerData(ResponseHandler responseHandler) {
-        localConnection.send(new GetPlayerData(userIDResolver.getID()), responseHandler);
+        localConnection.send(new GetLocalPlayerData(userIDResolver.getID()), responseHandler);
     }
 
     public void updateStrollTime(long millis, ResponseHandler responseHandler) {
         localConnection.send(new SetStrollTime(millis), responseHandler);
+    }
+
+    public void updateRemotePlayerData(PlayerData playerData, ResponseHandler responseHandler) {
+        remoteConnection.send(new UpdateRemotePlayerData(playerData), responseHandler);
     }
 
 
@@ -241,7 +242,7 @@ public class Client {
 //        PlayerData playerData = new PlayerData(getUserID());
 //        playerData.setUsername(username);
 //
-//        cLocalConnection.send(new UpdatePlayerData(playerData), responseHandler);
+//        cLocalConnection.send(new UpdateRemotePlayerData(playerData), responseHandler);
 //    }
 //
 //    /**
@@ -263,7 +264,7 @@ public class Client {
 //        PlayerData playerData = new PlayerData(getUserID());
 //        playerData.setUsername(username);
 //
-//        cRemoteConnection.send(new UpdatePlayerData(playerData), responseHandler);
+//        cRemoteConnection.send(new UpdateRemotePlayerData(playerData), responseHandler);
 //    }
 //
 //    /**
@@ -275,7 +276,7 @@ public class Client {
 //    public void updateStrollTimestamp(final Long strollTimestamp, final ResponseHandler responseHandler) {
 //        PlayerData playerData = new PlayerData(getUserID());
 //        playerData.setStrollTimestamp(strollTimestamp);
-//        cLocalConnection.send(new UpdatePlayerData(playerData), responseHandler);
+//        cLocalConnection.send(new UpdateRemotePlayerData(playerData), responseHandler);
 //    }
 //
 //    /**
@@ -287,7 +288,7 @@ public class Client {
 //    public void updateIntervalTimestamp(final Long intervalTimestamp, final ResponseHandler responseHandler) {
 //        PlayerData playerData = new PlayerData(getUserID());
 //        playerData.setIntervalTimestamp(intervalTimestamp);
-//        cLocalConnection.send(new UpdatePlayerData(playerData), responseHandler);
+//        cLocalConnection.send(new UpdateRemotePlayerData(playerData), responseHandler);
 //    }
 //
 //    /**
@@ -330,7 +331,7 @@ public class Client {
 //    public void joinGroup(final String groupId, final ResponseHandler responseHandler) {
 //        PlayerData playerData = new PlayerData(getUserID());
 //        playerData.setGroupId(groupId);
-//        cRemoteConnection.send(new UpdatePlayerData(playerData), responseHandler);
+//        cRemoteConnection.send(new UpdateRemotePlayerData(playerData), responseHandler);
 //    }
 //
 //    /**

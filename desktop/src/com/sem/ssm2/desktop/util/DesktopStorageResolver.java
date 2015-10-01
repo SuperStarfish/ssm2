@@ -28,6 +28,6 @@ public class DesktopStorageResolver extends LocalStorageResolver {
 
     @Override
     protected String[] createDatabases() {
-        return new String[]{playerTable, collectionTable};
+        return new String[]{playerTable, collectionTable, unsyncedCollectionTable};
     }
 }

@@ -11,12 +11,15 @@ import com.sem.ssm2.screens.*;
 import com.sem.ssm2.server.LocalStorageResolver;
 import com.sem.ssm2.server.database.Response;
 import com.sem.ssm2.server.database.ResponseHandler;
+import com.sem.ssm2.structures.PlayerData;
 import com.sem.ssm2.util.AccelerationStatus;
 import com.sem.ssm2.util.BackButtonListener;
 import com.sem.ssm2.util.NotificationController;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Observable;
+import java.util.Observer;
 
 public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
 
@@ -48,6 +51,19 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
         assets = new Assets();
 
         client = new Client(userIDResolver, localStorageResolver);
+        client.getRemoteStateChange().addObserver(new Observer() {
+            @Override
+            public void update(Observable o, Object arg) {
+                if(arg != null && arg == true) {
+                    client.getPlayerData(new ResponseHandler() {
+                        @Override
+                        public void handleResponse(Response response) {
+                            client.updateRemotePlayerData((PlayerData)response.getData(), null);
+                        }
+                    });
+                }
+            }
+        });
         client.connectToRemoteServer();
 
         Texture.setAssetManager(assets);

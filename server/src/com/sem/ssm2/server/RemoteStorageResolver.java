@@ -10,22 +10,26 @@ import java.sql.SQLException;
  */
 public class RemoteStorageResolver extends LocalStorageResolver {
 
-    protected final String cRemoteUserTable = "CREATE TABLE IF NOT EXISTS 'User' (Key INTEGER PRIMARY KEY NOT NULL UNIQUE, "
-            + "Id TEXT NOT NULL UNIQUE, Username TEXT DEFAULT 'Unknown',"
-            + " Interval INTEGER, Stroll INTEGER, GroupId TEXT NULL);";
+    protected final String remotePlayersTable = "CREATE TABLE IF NOT EXISTS 'players' (id text primary key not null," +
+            "username varchar default 'Anonymous', last_stroll bigint, walking_time bigint, running_time bigint, " +
+            "number_of_strolls integer);";
 
-    /**
-     * Query that creates a 'Group' table, if it does not exist.
-     */
-    protected final String cGroupTable = "CREATE TABLE IF NOT EXISTS 'Group' (Key INTEGER PRIMARY KEY NOT NULL, "
-            + "OwnerId TEXT NOT NULL, Name TEXT NOT NULL);";
+    protected final String groupTable = "create table if not exists groups (id text primary key not null, " +
+            "is_public boolean not null, password text, name text not null, ownerId text not null);";
+
+    protected final String groupMembersTable = "create table if not exists group_members (groupId text not null, " +
+            "playerId text not null);";
+
+    protected final String collectionsTable = "create table if not exists collections (id integer PRIMARY KEY AUTOINCREMENT, " +
+            "ownerId text not null, is_group boolean not null, type text not null, hue float not null, " +
+            "amount int not null default 0, unique(id, is_group, type, hue));";
 
     /**
      * Query that creates an 'Event_Hosts' table, if it does not exist. This table is used primarily for remote servers
      * to connect two clients with each other.
      */
-    protected final String cEventHostsTable = "CREATE TABLE IF NOT EXISTS 'Event_Hosts' (Code SMALLINT PRIMARY KEY NOT NULL, "
-            + "Ip TEXT NOT NULL, Port INTEGER NOT NULL, Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)";
+    protected final String eventHostsTable = "CREATE TABLE IF NOT EXISTS 'Event_Hosts' (Code SMALLINT PRIMARY KEY NOT NULL, "
+            + "Ip TEXT NOT NULL, Port INTEGER NOT NULL, Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP);";
 
     @Override
     protected boolean setLocal() {
@@ -45,6 +49,6 @@ public class RemoteStorageResolver extends LocalStorageResolver {
 
     @Override
     public String[] createDatabases() {
-        return new String[]{cRemoteUserTable, cEventHostsTable, cGroupTable};
+        return new String[]{remotePlayersTable, groupTable, groupMembersTable, collectionsTable, eventHostsTable};
     }
 }
