@@ -32,6 +32,10 @@ public class Client {
 
     protected boolean retryRemoteConnection = false;
 
+    public Client(LocalStorageResolver storageResolver) {
+        this(new DummyUserIdResolver(), storageResolver);
+    }
+
     public Client(UserIDResolver userIDResolver, LocalStorageResolver localStorageResolver) {
         this.userIDResolver = userIDResolver;
         this.localStorageResolver = localStorageResolver;

@@ -7,6 +7,7 @@ import com.sem.ssm2.desktop.util.DesktopAccelerationStatus;
 import com.sem.ssm2.desktop.util.DesktopIDResolver;
 import com.sem.ssm2.desktop.util.DesktopNotificationController;
 import com.sem.ssm2.desktop.util.DesktopStorageResolver;
+import com.sem.ssm2.screens.MainMenu;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -24,7 +25,8 @@ public class DesktopLauncher {
 				new DesktopAccelerationStatus(),
 				new DesktopNotificationController(),
 				new DesktopIDResolver(),
-				new DesktopStorageResolver()
+				new DesktopStorageResolver(),
+				MainMenu.class
 		), config);
 	}
 }

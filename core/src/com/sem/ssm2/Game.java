@@ -28,15 +28,18 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
     protected NotificationController notificationController;
     protected UserIDResolver userIDResolver;
     protected LocalStorageResolver localStorageResolver;
+    protected Class<? extends Screen> startScreen;
 
     public Game(AccelerationStatus accelerationStatus,
                 NotificationController notificationController,
                 UserIDResolver userIDResolver,
-                LocalStorageResolver localStorageResolver){
+                LocalStorageResolver localStorageResolver,
+                Class<? extends Screen> startScreen){
         this.accelerationStatus = accelerationStatus;
         this.notificationController = notificationController;
         this.userIDResolver = userIDResolver;
         this.localStorageResolver = localStorageResolver;
+        this.startScreen = startScreen;
     }
 
     protected Assets assets;
@@ -88,7 +91,7 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
             }
         });
 
-        setScreen(MainMenu.class);
+        setScreen(startScreen);
 
     }
 
