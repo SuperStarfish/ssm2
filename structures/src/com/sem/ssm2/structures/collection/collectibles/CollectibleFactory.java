@@ -1,6 +1,6 @@
 package com.sem.ssm2.structures.collection.collectibles;
 
-import java.util.Date;
+import java.util.*;
 
 /**
  * Creates and returns collectible objects.
@@ -12,9 +12,9 @@ public class CollectibleFactory {
      * Used by the rewardgenerator to randomly pick one.
      */
     protected String[] cCollectiblesList = {
-            Collectibles.FishA.toString(),
-            Collectibles.FishB.toString(),
-            Collectibles.FishC.toString()};
+            Collectible.FishA.toString(),
+            Collectible.FishB.toString(),
+            Collectible.FishC.toString()};
 
     /**
      * Generates a collectible of the class of the given string, with colour wavelength.
@@ -24,8 +24,8 @@ public class CollectibleFactory {
      * @param ownerId The owner of the collectible.
      * @return Collectible object
      */
-    public Collectible generateCollectible(final String type, final float hue, final String ownerId) {
-        Collectible result = null;
+    public com.sem.ssm2.structures.collection.collectibles.Collectible generateCollectible(final String type, final float hue, final String ownerId) {
+        com.sem.ssm2.structures.collection.collectibles.Collectible result = null;
 
         switch (type) {
             case "FishA":
@@ -54,7 +54,7 @@ public class CollectibleFactory {
      * @param date    The date that this collectible was found.
      * @return The collectible.
      */
-    public final Collectible generateCollectible(final String type, final float hue, final int amount,
+    public final com.sem.ssm2.structures.collection.collectibles.Collectible generateCollectible(final String type, final float hue, final int amount,
                                                  final Date date) {
         return generateCollectible(type, hue, amount, date, null);
     }
@@ -70,9 +70,9 @@ public class CollectibleFactory {
      * @param ownerId The owner of the collectible.
      * @return The collectible.
      */
-    public final Collectible generateCollectible(final String type, final float hue, final int amount,
+    public final com.sem.ssm2.structures.collection.collectibles.Collectible generateCollectible(final String type, final float hue, final int amount,
                                                  final Date date, final String ownerId) {
-        Collectible result = null;
+        com.sem.ssm2.structures.collection.collectibles.Collectible result = null;
 
         switch (type) {
             case "FishA":
@@ -105,7 +105,7 @@ public class CollectibleFactory {
      *
      * @author Jean de Leeuw
      */
-    public enum Collectibles {
+    public enum Collectible {
         /**
          * Collectible FishA.
          */
@@ -119,6 +119,15 @@ public class CollectibleFactory {
         /**
          * Collectible FishC.
          */
-        FishC
+        FishC;
+
+        private static final List<Collectible> VALUES =
+                Collections.unmodifiableList(Arrays.asList(values()));
+        private static final int SIZE = VALUES.size();
+        private static final Random RANDOM = new Random();
+
+        public static Collectible randomCollectible()  {
+            return VALUES.get(RANDOM.nextInt(SIZE));
+        }
     }
 }

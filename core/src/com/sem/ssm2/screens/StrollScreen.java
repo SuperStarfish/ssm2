@@ -14,10 +14,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Timer;
 import com.sem.ssm2.Game;
+import com.sem.ssm2.stroll.Stroll;
 import com.sem.ssm2.util.AccelerationState;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Random;
 
 public class StrollScreen extends GameScreen {
     public StrollScreen(Game game) {
@@ -27,14 +29,20 @@ public class StrollScreen extends GameScreen {
 
     protected SpriteBatch batch;
     protected TextureRegion world;
-    protected float rotation = 0, rotationSpeed = 0;
+    protected float rotation = 0;
+    protected AccelerationState accelerationState;
     TextureRegion[] animationFrames;
     Animation animation;
     float elapsedTime;
     protected boolean isMoving = false;
     protected Label timerLabel;
-    protected int remainingTime = 300;
+    protected int remainingTime = 60;
+//    protected int remainingTime = 300;
     protected Stage stage;
+    protected boolean isActive = false;
+    protected Random random = new Random();
+    protected int timeSinceLastEvent;
+    protected Stroll stroll;
 
     Timer timer;
 
@@ -57,6 +65,9 @@ public class StrollScreen extends GameScreen {
 
     @Override
     public void show() {
+        stroll = game.getStroll();
+        isActive = true;
+        timeSinceLastEvent = 0;
         elapsedTime = 0f;
         stage = new Stage();
         inputMultiplexer.addProcessor(stage);
@@ -75,13 +86,13 @@ public class StrollScreen extends GameScreen {
         animation = new Animation(1/4f, animationFrames);
         animation.setPlayMode(Animation.PlayMode.LOOP);
 
+        setWalkingState(game.getAccelerationStatus().getAccelerationState());
+
         game.getAccelerationStatus().getSubject().addObserver(new Observer() {
             @Override
             public void update(Observable o, Object arg) {
                 AccelerationState accelerationState = (AccelerationState) arg;
-                System.out.println(accelerationState.toString() + " -> " + accelerationState.getRotationSpeed());
-                rotationSpeed = accelerationState.getRotationSpeed();
-                isMoving = accelerationState.isMoving();
+                setWalkingState(accelerationState);
             }
         });
 
@@ -89,13 +100,31 @@ public class StrollScreen extends GameScreen {
 
         timerLabel = new Label(formattedTime(remainingTime), labelStyle);
 
-        timer = new Timer();
-        timer.scheduleTask(new Timer.Task() {
-            @Override
-            public void run() {
-                timerLabel.setText(formattedTime(--remainingTime));
-            }
-        }, 1, 1);
+        if(timer == null) {
+            timer = new Timer();
+            timer.scheduleTask(new Timer.Task() {
+                @Override
+                public void run() {
+                    if (--remainingTime > 0) {
+                        timerLabel.setText(formattedTime(remainingTime));
+                        if (isActive) {
+                            System.out.println("active");
+                            if (random.nextFloat() < (accelerationState.getEventChance() * timeSinceLastEvent / 60f)) {
+                                game.setScreen(stroll.getRandomEventScreen());
+                            } else {
+                                timeSinceLastEvent++;
+                            }
+                        }
+                    } else {
+                        if(isActive) {
+                            timer.stop();
+                            timer = null;
+                            game.setScreen(RewardScreen.class);
+                        }
+                    }
+                }
+            }, 1, 1);
+        }
 
         Table table = new Table();
         table.setFillParent(true);
@@ -105,6 +134,12 @@ public class StrollScreen extends GameScreen {
         table.row();
 
         stage.addActor(table);
+    }
+
+    public void setWalkingState(AccelerationState accelerationState) {
+        System.out.println(accelerationState.toString() + " -> " + accelerationState.getRotationSpeed());
+        this.accelerationState = accelerationState;
+        isMoving = accelerationState.isMoving();
     }
 
     public String formattedTime(int time) {
@@ -161,7 +196,7 @@ public class StrollScreen extends GameScreen {
 //        batch.draw(animation.getKeyFrame(elapsedTime),
 //                Gdx.graphics.getWidth() / 2f - 128, 120 * assets.getRatio());
 
-        rotation += rotationSpeed;
+        rotation += accelerationState.getRotationSpeed();
         batch.end();
         stage.act();
         stage.draw();
@@ -185,6 +220,7 @@ public class StrollScreen extends GameScreen {
     @Override
     public void hide() {
         inputMultiplexer.removeProcessor(stage);
+        isActive = false;
     }
 
     @Override

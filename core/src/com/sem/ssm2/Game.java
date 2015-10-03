@@ -11,6 +11,7 @@ import com.sem.ssm2.screens.*;
 import com.sem.ssm2.server.LocalStorageResolver;
 import com.sem.ssm2.server.database.Response;
 import com.sem.ssm2.server.database.ResponseHandler;
+import com.sem.ssm2.stroll.Stroll;
 import com.sem.ssm2.structures.PlayerData;
 import com.sem.ssm2.util.AccelerationStatus;
 import com.sem.ssm2.util.BackButtonListener;
@@ -44,6 +45,7 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
     protected Screen queuedScreen;
     protected Client client;
     protected boolean setPreviousScreen = false;
+    protected Stroll stroll;
 
     @Override
     public void create() {
@@ -189,6 +191,14 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
 
     public AccelerationStatus getAccelerationStatus() {
         return accelerationStatus;
+    }
+
+    public void startStroll() {
+        stroll = new Stroll(this);
+    }
+
+    public Stroll getStroll() {
+        return stroll;
     }
 
 }

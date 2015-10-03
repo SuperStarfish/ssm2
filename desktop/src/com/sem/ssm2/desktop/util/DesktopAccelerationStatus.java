@@ -22,7 +22,7 @@ public class DesktopAccelerationStatus implements AccelerationStatus {
      */
     @Override
     public final AccelerationState getAccelerationState() {
-        return AccelerationState.CHEATING;
+        return AccelerationState.WALKING;
     }
 
     @Override

@@ -171,6 +171,7 @@ public class MainMenu extends GameScreen {
                     client.updateStrollTime(System.currentTimeMillis(), new ResponseHandler(){
                         @Override
                         public void handleResponse(Response response) {
+                            game.startStroll();
                             game.setScreen(StrollScreen.class);
                         }
                     });
