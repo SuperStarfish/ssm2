@@ -62,10 +62,7 @@ public abstract class BaseMenuScreen extends GameScreen{
         super(game);
     }
 
-    @Override
-    public Class<? extends Screen> previousScreen() {
-        return MainMenu.class;
-    }
+    public abstract String getScreenName();
 
     abstract Class<? extends Screen> swipeLeftScreen();
 
@@ -145,7 +142,7 @@ public abstract class BaseMenuScreen extends GameScreen{
         backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.setScreen(MainMenu.class);
+                game.setScreen(previousScreen());
             }
         });
 
@@ -153,7 +150,6 @@ public abstract class BaseMenuScreen extends GameScreen{
         header.add(screenTitle).pad(0, 5 * assets.getRatio(), 0, 5 * assets.getRatio()).expandX();
     }
 
-    public abstract String getScreenName();
 
     private Texture createHeaderBackground() {
         Pixmap pixmap = new Pixmap(4,4, Pixmap.Format.RGBA8888);

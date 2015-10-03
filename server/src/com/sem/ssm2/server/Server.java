@@ -120,7 +120,7 @@ public class Server {
         } else {
             createServerSocket(cDefaultPort);
             createExternalIP();
-            validateExternalConnection();
+//            validateExternalConnection();
 
             initCleaner();
         }

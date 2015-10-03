@@ -11,6 +11,8 @@ import com.sem.ssm2.server.database.ResponseHandler;
 import com.sem.ssm2.server.database.query.*;
 import com.sem.ssm2.structures.PlayerData;
 import com.sem.ssm2.structures.Subject;
+import com.sem.ssm2.structures.collection.Collection;
+import com.sem.ssm2.structures.groups.GroupData;
 
 import java.util.ArrayList;
 
@@ -83,6 +85,42 @@ public class Client {
         remoteConnection.send(new UpdateRemotePlayerData(playerData), responseHandler);
     }
 
+    public void createGroup(GroupData groupData, ResponseHandler responseHandler) {
+        remoteConnection.send(new CreateNewGroup(groupData, playerData), responseHandler);
+    }
+
+    public void getGroups(ResponseHandler responseHandler) {
+        remoteConnection.send(new GetPlayerGroups(playerData.getId()), responseHandler);
+    }
+
+    public void leaveGroup(GroupData groupData, ResponseHandler responseHandler) {
+        remoteConnection.send(new LeaveGroup(groupData, playerData), responseHandler);
+    }
+
+    public void getPublicGroups(ResponseHandler responseHandler) {
+        remoteConnection.send(new GetPublicGroups(playerData), responseHandler);
+    }
+
+    public void joinGroup(GroupData groupData, ResponseHandler responseHandler) {
+        remoteConnection.send(new JoinGroup(groupData, playerData), responseHandler);
+    }
+
+    public void getGroupData(int groupId, ResponseHandler responseHandler) {
+        remoteConnection.send(new GetGroupData(groupId), responseHandler);
+    }
+
+    public void synchronizeLocalCollection(ResponseHandler responseHandler) {
+        final Collection collection = new Collection();
+        localConnection.send(new GetUnsyncedCollection(playerData), new ResponseHandler() {
+            @Override
+            public void handleResponse(Response response) {
+                collection.addAll((Collection) response.getData());
+            }
+        });
+        if(collection.size() > 0) {
+            remoteConnection.send(new AddCollection(collection), responseHandler);
+        }
+    }
 
     /*-------
     |*********
@@ -97,6 +135,10 @@ public class Client {
     public void setRemoteConnection(Connection connection) {
         remoteConnection = connection;
         remoteStateChange.update(connection.isConnected());
+    }
+
+    public boolean isRemoteConnected() {
+        return remoteConnection.isConnected();
     }
 
     public void connectToRemoteServer() {

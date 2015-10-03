@@ -28,12 +28,17 @@ public class CollectionScreen extends BaseMenuScreen {
 
     @Override
     Class<? extends Screen> swipeLeftScreen() {
-        return NewGroupScreen.class;
+        return GroupOverviewScreen.class;
     }
 
     @Override
     Class<? extends Screen> swipeRightScreen() {
-        return NewGroupScreen.class;
+        return null;
+    }
+
+    @Override
+    public Class<? extends Screen> previousScreen() {
+        return MainMenu.class;
     }
 
     @Override

@@ -9,9 +9,14 @@ import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.sem.ssm2.Game;
+import com.sem.ssm2.server.database.Response;
+import com.sem.ssm2.server.database.ResponseHandler;
+import com.sem.ssm2.structures.collection.Collection;
+import com.sem.ssm2.structures.groups.GroupData;
 
 public class NewGroupScreen extends BaseMenuScreen {
 
@@ -28,7 +33,12 @@ public class NewGroupScreen extends BaseMenuScreen {
 
     @Override
     Class<? extends Screen> swipeRightScreen() {
-        return CollectionScreen.class;
+        return null;
+    }
+
+    @Override
+    public Class<? extends Screen> previousScreen() {
+        return GroupOverviewScreen.class;
     }
 
     @Override
@@ -88,13 +98,13 @@ public class NewGroupScreen extends BaseMenuScreen {
 
 
         pixmap = new Pixmap((int)(60 * assets.getRatio()), (int)(60 * assets.getRatio()), Pixmap.Format.RGBA8888);
-        pixmap.setColor(Color.RED);
+        pixmap.setColor(Color.BLACK);
         pixmap.fill();
-        pixmap.setColor(Color.GREEN);
+        pixmap.setColor(Color.RED);
         pixmap.fillRectangle(2, 2, pixmap.getWidth() - 4, pixmap.getHeight() - 4);
         TextureRegionDrawable uncheckedDrawable = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap)));
 
-        pixmap.setColor(Color.ORANGE);
+        pixmap.setColor(Color.GREEN);
         pixmap.fillRectangle(2, 2, pixmap.getWidth() - 4, pixmap.getHeight() - 4);
         TextureRegionDrawable checkedDrawable = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap)));
 
@@ -111,14 +121,45 @@ public class NewGroupScreen extends BaseMenuScreen {
         group.add(new Label("Group name:", labelStyle)).colspan(2)
                 .pad(0, Gdx.graphics.getWidth() * 0.15f, 0, Gdx.graphics.getWidth() * 0.15f).fillX().expandX();
         group.row();
-        TextField textField = new TextField("text", textFieldStyle);
+        final TextField textField = new TextField("text", textFieldStyle);
         group.add(textField).width(0.7f * Gdx.graphics.getWidth()).colspan(2);
         group.row();
         group.add(new Label("Public:", labelStyle))
                 .padLeft(Gdx.graphics.getWidth() * 0.15f).fillX().expandX();
-        group.add(new CheckBox("", checkBoxStyle)).padRight(Gdx.graphics.getWidth() * 0.15f);
+        final CheckBox checkBox = new CheckBox("", checkBoxStyle);
+        group.add(checkBox).padRight(Gdx.graphics.getWidth() * 0.15f);
         group.row();
-        group.add(new TextButton("Create", buttonStyle)).colspan(2);
+        group.add(new Label("Password:", labelStyle)).colspan(2)
+                .pad(0, Gdx.graphics.getWidth() * 0.15f, 0, Gdx.graphics.getWidth() * 0.15f).fillX().expandX();
+        group.row();
+        final TextField passWordField = new TextField("", textFieldStyle);
+        group.add(passWordField).width(0.7f * Gdx.graphics.getWidth()).colspan(2);
+        group.row();
+        TextButton submitButton = new TextButton("Create", buttonStyle);
+        submitButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                System.out.println("New group '" + textField.getText() + "' that is public:" +
+                        checkBox.isChecked() + " and password:" + passWordField.getText()
+                );
+                if(!textField.getText().isEmpty()) {
+                    client.createGroup(new GroupData(
+                            checkBox.isChecked(),
+                            passWordField.getText(),
+                            textField.getText()
+                    ), new ResponseHandler() {
+                        @Override
+                        public void handleResponse(Response response) {
+                            if(response.isSuccess()) {
+                                System.out.println("CREATED A NEW GROUP");
+                                game.setScreen(GroupOverviewScreen.class);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        group.add(submitButton).colspan(2);
         group.row();
 //
 //        group.addActor(new Label("Group name:", labelStyle));

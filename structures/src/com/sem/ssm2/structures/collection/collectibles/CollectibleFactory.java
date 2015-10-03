@@ -56,7 +56,7 @@ public class CollectibleFactory {
      */
     public final Collectible generateCollectible(final String type, final float hue, final int amount,
                                                  final Date date) {
-        return generateCollectible(type, hue, amount, date, "Yours");
+        return generateCollectible(type, hue, amount, date, null);
     }
 
     /**

@@ -1,6 +1,7 @@
-package com.sem.ssm2.server.database.query.temp;
+package com.sem.ssm2.server.database.query;
 
 import com.sem.ssm2.server.database.query.Query;
+import com.sem.ssm2.server.database.query.temp.AddCollectible;
 import com.sem.ssm2.structures.collection.Collection;
 import com.sem.ssm2.structures.collection.collectibles.Collectible;
 

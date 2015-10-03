@@ -23,7 +23,7 @@ public class Selection {
      */
     public Selection(GroupData groupData) {
         cName = groupData.toString();
-        cValue = groupData.getGroupId();
+        cValue = Integer.toString(groupData.getGroupId());
     }
 
     /**

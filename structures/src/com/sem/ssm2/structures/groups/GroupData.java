@@ -24,10 +24,9 @@ public class GroupData implements Serializable {
      */
     protected String cOwnerId;
 
-    /**
-     * Name of the owner.
-     */
-    protected String cOwnerName;
+    protected boolean isPublic;
+
+    protected String password;
 
     /**
      * Constructs a new group data object.
@@ -35,19 +34,18 @@ public class GroupData implements Serializable {
     public GroupData() {
     }
 
-    /**
-     * Constructs a new group data object and sets the following parameters.
-     *
-     * @param groupId   integer representing the id of the group.
-     * @param groupName string representing the name of the group.
-     * @param ownerId   string representing the group owner's id.
-     * @param ownerName string representing the name of the group's owner.
-     */
-    public GroupData(int groupId, String groupName, String ownerId, String ownerName) {
-        cGroupId = groupId;
-        cName = groupName;
-        cOwnerId = ownerId;
-        cOwnerName = ownerName;
+    public GroupData(boolean isPublic, String password, String name) {
+        this.isPublic = isPublic;
+        this.password = password;
+        this.cName = name;
+    }
+
+    public GroupData(int groupId, boolean isPublic, String password, String name, String admin) {
+        this.cGroupId = groupId;
+        this.isPublic = isPublic;
+        this.password = password;
+        this.cName = name;
+        cOwnerId = admin;
     }
 
     /**
@@ -55,8 +53,24 @@ public class GroupData implements Serializable {
      *
      * @return string representing the group's id.
      */
-    public String getGroupId() {
-        return Integer.toString(cGroupId);
+    public int getGroupId() {
+        return cGroupId;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getName() {
+        return cName;
+    }
+
+    public String getOwner() {
+        return cOwnerId;
     }
 
     /**
@@ -70,7 +84,7 @@ public class GroupData implements Serializable {
 
     @Override
     public String toString() {
-        return cName;
+        return "{" + cGroupId + ", " + cName + ", " + isPublic + ", " + cOwnerId + "}";
     }
 
     /**
