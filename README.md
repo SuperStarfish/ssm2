@@ -3,8 +3,8 @@ Super starfish mania
 
 #### Build status
 
-* master: [![Build Status](https://travis-ci.org/SuperStarfish/ssm2.svg?branch=master)]()
-* development: [![Build Status](https://travis-ci.org/SuperStarfish/ssm2.svg?branch=development)]()
+* master: - 
+* development: - 
 
 #### Dependencies (other than specified in build.gradle)
 
