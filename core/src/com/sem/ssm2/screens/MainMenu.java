@@ -20,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Timer;
 import com.sem.ssm2.Game;
+import com.sem.ssm2.screens.aquarium.Fish;
 import com.sem.ssm2.server.database.Response;
 import com.sem.ssm2.server.database.ResponseHandler;
 import com.sem.ssm2.structures.PlayerData;
@@ -27,6 +28,7 @@ import com.sem.ssm2.structures.collection.Collection;
 import com.sem.ssm2.structures.collection.collectibles.Collectible;
 import com.sem.ssm2.util.CollectibleDrawer;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class MainMenu extends GameScreen {
@@ -41,6 +43,8 @@ public class MainMenu extends GameScreen {
     int remainingTime;
     TextButton button;
     CollectibleDrawer collectibleDrawer;
+
+    ArrayList<Fish> allFish;
 
     TextButton.TextButtonStyle buttonStyle;
 
@@ -84,6 +88,7 @@ public class MainMenu extends GameScreen {
     @Override
     public void show() {
         batch = new SpriteBatch();
+        allFish = new ArrayList<>();
         collectibleDrawer = new CollectibleDrawer(assets);
         background = assets.get("images/lightrays.png", Texture.class);
         rock1 = assets.get("images/rock1.png", Texture.class);
@@ -101,18 +106,14 @@ public class MainMenu extends GameScreen {
             public void handleResponse(Response response) {
                 Collection collection = (Collection)response.getData();
                 if(collection != null) {
-                    Random random = new Random();
-
                     for(Collectible collectible : collection) {
                         Sprite sprite = collectibleDrawer.drawCollectible(collectible);
                         sprite.setSize(
                                 sprite.getTexture().getWidth() / 1.5f * assets.getRatio(),
                                 sprite.getTexture().getHeight() / 1.5f * assets.getRatio()
                         );
-                        Image image = new Image(new SpriteDrawable(sprite));
-                        image.setPosition(
-                                random.nextInt((int)(Gdx.graphics.getWidth() - sprite.getWidth())),
-                                random.nextInt((int)(Gdx.graphics.getHeight() - sprite.getHeight())));
+                        Fish image = new Fish(new SpriteDrawable(sprite));
+                        allFish.add(image);
                         stage.addActor(image);
                     }
                 }
@@ -236,6 +237,9 @@ public class MainMenu extends GameScreen {
 
     @Override
     public void render(float delta) {
+        for(Fish fish : allFish) {
+            fish.swim();
+        }
         renderBackground();
         stage.act();
         stage.draw();

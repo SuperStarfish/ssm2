@@ -122,7 +122,7 @@ public class Client {
             }
         });
         if(collection.size() > 0) {
-            remoteConnection.send(new AddCollection(collection), responseHandler);
+//            remoteConnection.send(new AddCollection(collection), responseHandler);
         }
     }
 
