@@ -10,10 +10,11 @@ import java.util.Random;
 // TODO: Fix boundaries
 public class Fish extends Image {
 
-    protected static Random random = new Random();
     protected Sprite sprite;
-    protected float speed = 1.0f;
+    protected float speed = (float) (1 + Math.random() * 2);
+    protected float flipChance = .01f;
     protected int maxAngleTurnSpeed = 4;
+    protected float upperXBoundary, lowerXBoundary , upperYBoundary, lowerYBoundary;
 
     // Current angle of a fish. When a fish is rotating to a next angle, this value is kept as storage.
     protected int currentAngle = 0;
@@ -24,15 +25,9 @@ public class Fish extends Image {
         this.sprite = sprite.getSprite();
         currentAngle = (int) this.getRotation(); // This should happen before initializeRandomPosition()
         initializeRandomPosition();
+        updateBoundaries();
+        setOrigin(getWidth()/2,getHeight()/2);
     }
-
-    // Called every X time.
-    public void swim() {
-        generateAngle(maxAngleTurnSpeed);
-        move(speed);
-        boundaryCheck();
-    }
-
 
     // Called once, at creation of the fish
     public void initializeRandomPosition() {
@@ -49,8 +44,17 @@ public class Fish extends Image {
         final int screenWidth = Gdx.graphics.getWidth();
         final int screenHeight = Gdx.graphics.getHeight();
 
-        this.setPosition(screenWidth/2, screenHeight/2);
+        this.setPosition(screenWidth / 2, screenHeight / 2);
 
+    }
+
+
+    // Called every X time.
+    public void swim() {
+        generateAngle(maxAngleTurnSpeed);
+        randomFlip();
+        move();
+        boundaryCheck();
     }
 
     public void generateAngle(int angle) {
@@ -68,7 +72,14 @@ public class Fish extends Image {
         currentAngle = newAngle;
     }
 
-    public void move(float speed) {
+    private void randomFlip(){
+        if(Math.random() < flipChance){
+            flipImageY();
+            currentAngle *= -1;
+        }
+    }
+
+    public void move() {
         final float defaultRotation = 90f;
         this.setRotation(currentAngle + defaultRotation);
 
@@ -77,44 +88,34 @@ public class Fish extends Image {
                 (float) Math.cos(Math.toRadians(currentAngle)) * -speed);
     }
 
+    public void updateBoundaries() {
+        upperXBoundary = Gdx.graphics.getWidth() - getWidth() * 3 / 4;
+        lowerXBoundary = -getWidth()/4;
+        upperYBoundary = Gdx.graphics.getHeight() - getHeight() * 3 / 4;
+        lowerYBoundary = 0;
+    }
 
     // check for boundaries.
     public void boundaryCheck() {
-        final int halfOfCircleAngle = 180;
-
-        if (outOfHorizontalBoundary()) {
+        if (getX() < lowerXBoundary ||  getX() > upperXBoundary) {
             flipImageY();
             currentAngle *= -1;
+            move();
         }
 
-        if (outOfVerticalBoundary()) {
-            currentAngle = normalizeAngle(halfOfCircleAngle - currentAngle);
+        if (getY() < lowerYBoundary || getY() > upperYBoundary) {
+            currentAngle = normalizeAngle(180 - currentAngle);
+            move();
         }
     }
-
-    public boolean outOfHorizontalBoundary() {
-        final int screenWidth = Gdx.graphics.getWidth();
-
-        return this.getOriginX() < 0 || screenWidth < getOriginX();
-    }
-
-    public boolean outOfVerticalBoundary() {
-        final int screenHeight = Gdx.graphics.getHeight();
-
-        return this.getOriginY() < 0 || this.getOriginY() > screenHeight;
-    }
-
 
     // normalize the angle
     public int normalizeAngle(int angle) {
-        final int halfCircle = 180;
-        final int fullCircle = 360;
-
-        if (angle > halfCircle) {
-            angle = angle - fullCircle;
+        if (angle > 180) {
+            angle = angle - 360;
         }
-        if (angle < -halfCircle) {
-            angle = angle + fullCircle;
+        if (angle < -180) {
+            angle = angle + 360;
         }
 
         return angle;
@@ -125,8 +126,8 @@ public class Fish extends Image {
     // get out of bounds because the flips only happen on the Y-axis.
     // The current swimming algorithm can only swim horizontally.
     public boolean validateAngle(int angle) {
-        final int min = 25; // 25 default
-        final int max = 155; // 155 default
+        final int min = 35; // 25 default
+        final int max = 145; // 155 default
 
         angle = Math.abs(angle);
         return min < angle && angle < max;

@@ -59,7 +59,7 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
         client.getRemoteStateChange().addObserver(new Observer() {
             @Override
             public void update(Observable o, Object arg) {
-                if(arg != null && arg == true) {
+                if(arg != null && (boolean) arg) {
                     client.getPlayerData(new ResponseHandler() {
                         @Override
                         public void handleResponse(Response response) {
@@ -69,8 +69,8 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
                 }
             }
         });
-        client.setRemoteIP("10.0.0.6");
-        client.setRemotePort(56789);
+        client.setRemoteIP("127.0.0.1");
+        client.setRemotePort(14000);
         client.connectToRemoteServer();
 
         Texture.setAssetManager(assets);
