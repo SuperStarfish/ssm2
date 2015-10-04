@@ -163,6 +163,7 @@ public class Client {
     \*/
 
     public void setRemoteConnection(Connection connection) {
+        System.out.println("Remote connection: " + connection.isConnected());
         remoteConnection = connection;
         remoteStateChange.update(connection.isConnected());
     }

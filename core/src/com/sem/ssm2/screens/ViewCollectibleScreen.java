@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.sem.ssm2.Game;
 import com.sem.ssm2.server.database.Response;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 public class ViewCollectibleScreen extends BaseMenuScreen {
 
     protected Collectible collectible;
+    protected int[] groups;
 
     public ViewCollectibleScreen(Game game) {
         super(game);
@@ -67,13 +69,18 @@ public class ViewCollectibleScreen extends BaseMenuScreen {
 
                 if(response.isSuccess()) {
                     ArrayList<GroupData> groupData = (ArrayList<GroupData>)response.getData();
-                    System.out.println("Size" + groupData.size());
-                    String[] list = new String[]{"Group 1","Group 2","Group 3","Group 4"};
-//                    int count = 0;
-//                    for(GroupData data : groupData) {
-//                        list[count++] = data.getName();
-//                    }
-//                    if(groupData.size() > 0) {
+                    System.out.println("SIze: " + groupData.size());
+                    if(groupData.size() > 0) {
+                        System.out.println("LARGER THAN 2");
+
+
+                        String[] list = new String[groupData.size()];
+                        groups = new int[groupData.size()];
+                        for(int i = 0; i < groupData.size(); i++){
+                            list[i] = groupData.get(i).getName();
+                            groups[i] = groupData.get(i).getGroupId();
+                        }
+
                         List.ListStyle listStyle = new List.ListStyle(
                                 assets.get("white_buttonFont", BitmapFont.class),
                                 Color.TEAL,
@@ -97,10 +104,26 @@ public class ViewCollectibleScreen extends BaseMenuScreen {
                                 listStyle
                         );
 
-                        SelectBox<String> selectBox = new SelectBox<String>(selectBoxStyle);
+                        final SelectBox<String> selectBox = new SelectBox<>(selectBoxStyle);
                         selectBox.setItems(list);
 
                         table.add(selectBox);
+                        table.row();
+                        TextButton textButton = new TextButton("Send to group", buttonStyle);;
+                        textButton.addListener(new ChangeListener() {
+                            @Override
+                            public void changed(ChangeEvent event, Actor actor) {
+                                client.sendCollectible(collectible, groups[selectBox.getSelectedIndex()], new ResponseHandler(){
+                                    @Override
+                                    public void handleResponse(Response response) {
+                                        game.setScreen(ViewCollectibleScreen.class);
+                                    }
+                                });
+                            }
+                        });
+                        table.add(textButton);
+
+                    }
                 }
             }
         });
