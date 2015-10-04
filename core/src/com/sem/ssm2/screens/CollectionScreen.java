@@ -1,24 +1,19 @@
 package com.sem.ssm2.screens;
 
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
-import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.sem.ssm2.Game;
 import com.sem.ssm2.server.database.Response;
 import com.sem.ssm2.server.database.ResponseHandler;
@@ -38,6 +33,7 @@ public class CollectionScreen extends BaseMenuScreen {
 
     protected Table body;
     protected CollectibleDrawer collectibleDrawer;
+    protected Sprite menuButton;
 
     protected Comparator<Collectible> collectibleComparator;
     protected SelectBox<Comparator<Collectible>> collectibleSortSelectBox;
@@ -66,8 +62,7 @@ public class CollectionScreen extends BaseMenuScreen {
         assets.load("images/FishA.png", Texture.class);
         assets.load("images/FishB.png", Texture.class);
         assets.load("images/FishC.png", Texture.class);
-        assets.load("images/button.png", Texture.class);
-
+        assets.load("images/menuButton.png", Texture.class);
     }
 
     @Override
@@ -77,7 +72,6 @@ public class CollectionScreen extends BaseMenuScreen {
 
     @Override
     protected WidgetGroup createBody() {
-        stage.setDebugAll(true);
         body = new Table();
         fillBody();
         return new ScrollPane(body);
@@ -90,6 +84,18 @@ public class CollectionScreen extends BaseMenuScreen {
         if(client.isRemoteConnected()) {
             client.synchronizeLocalCollection();
         }
+
+        menuButton = new Sprite(assets.get("images/menuButton.png", Texture.class));
+        menuButton.setSize(
+                menuButton.getWidth() * assets.getRatio(), menuButton.getHeight() * assets.getRatio());
+        SpriteDrawable spriteDrawable = new SpriteDrawable(menuButton);
+
+        final TextButton.TextButtonStyle clickableButton = new TextButton.TextButtonStyle(
+                spriteDrawable,
+                spriteDrawable,
+                spriteDrawable,
+                assets.get("white_buttonFont", BitmapFont.class)
+        );
 
         client.getLocalCollection(new ResponseHandler() {
             @Override
@@ -104,7 +110,17 @@ public class CollectionScreen extends BaseMenuScreen {
                     );
                     body.add(new Image(new SpriteDrawable(sprite)));
                     body.add(new Label("" + collectible.getRarity(), labelStyle)).expandX();
-                    body.add(new Label(">", labelStyle)).pad(10);
+                    TextButton textButton = new TextButton("", clickableButton);
+                    textButton.setSize(sprite.getHeight(), sprite.getHeight());
+                    textButton.addListener(new ClickListener(){
+                        @Override
+                        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                            game.setCollectible(collectible);
+                            game.setScreen(ViewCollectibleScreen.class);
+                            return super.touchDown(event, x, y, pointer, button);
+                        }
+                    });
+                    body.add(textButton);
                     body.row();
                 }
             }

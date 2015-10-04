@@ -13,6 +13,7 @@ import com.sem.ssm2.server.database.Response;
 import com.sem.ssm2.server.database.ResponseHandler;
 import com.sem.ssm2.stroll.Stroll;
 import com.sem.ssm2.structures.PlayerData;
+import com.sem.ssm2.structures.collection.collectibles.Collectible;
 import com.sem.ssm2.util.AccelerationStatus;
 import com.sem.ssm2.util.BackButtonListener;
 import com.sem.ssm2.util.NotificationController;
@@ -49,6 +50,7 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
     protected Client client;
     protected boolean setPreviousScreen = false;
     protected Stroll stroll;
+    protected Collectible collectible;
 
     @Override
     public void create() {
@@ -70,7 +72,7 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
             }
         });
         client.setRemoteIP("127.0.0.1");
-        client.setRemotePort(14000);
+        client.setRemotePort(56789);
         client.connectToRemoteServer();
 
         Texture.setAssetManager(assets);
@@ -202,6 +204,14 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
 
     public Stroll getStroll() {
         return stroll;
+    }
+
+    public void setCollectible(Collectible collectible) {
+        this.collectible = collectible;
+    }
+
+    public Collectible getCollectible() {
+        return collectible;
     }
 
 }

@@ -66,7 +66,7 @@ public class MainMenu extends GameScreen {
         parameter.size = 124;
         parameter.borderColor = Color.BLACK;
         parameter.borderWidth = 1;
-        assets.generateFont("titleFont", "fonts/Quicksand-BoldItalic.otf", parameter);
+        assets.generateFont("titleFont", "fonts/Blenda Script.otf", parameter);
         parameter.color = new Color(71 / 255f, 37 / 255f, 2 / 255f, 1);
         parameter.size = 80;
         parameter.borderWidth = 0;
@@ -151,9 +151,10 @@ public class MainMenu extends GameScreen {
                 Color.YELLOW
         );
 
-        Label label = new Label("Super StarFish\nMania", labelStyle);
+        Label label = new Label("Super Starfish\nMania", labelStyle);
         label.setAlignment(Align.center);
         group.addActor(label);
+        group.padTop(40 * assets.getRatio());
 
         client.getPlayerData(new ResponseHandler() {
             @Override
