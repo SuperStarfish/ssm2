@@ -1,19 +1,34 @@
 package com.sem.ssm2.screens;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
+import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.sem.ssm2.Game;
 import com.sem.ssm2.server.database.Response;
 import com.sem.ssm2.server.database.ResponseHandler;
 import com.sem.ssm2.structures.collection.Collection;
 import com.sem.ssm2.structures.collection.collectibles.Collectible;
+import com.sem.ssm2.structures.collection.collectibles.comparators.HueComparator;
+import com.sem.ssm2.structures.collection.collectibles.comparators.RarityComparator;
 import com.sem.ssm2.util.CollectibleDrawer;
 
-import java.util.Random;
+import java.util.Comparator;
 
 public class CollectionScreen extends BaseMenuScreen {
 
@@ -23,6 +38,9 @@ public class CollectionScreen extends BaseMenuScreen {
 
     protected Table body;
     protected CollectibleDrawer collectibleDrawer;
+
+    protected Comparator<Collectible> collectibleComparator;
+    protected SelectBox<Comparator<Collectible>> collectibleSortSelectBox;
 
     @Override
     Class<? extends Screen> swipeLeftScreen() {
@@ -48,16 +66,25 @@ public class CollectionScreen extends BaseMenuScreen {
         assets.load("images/FishA.png", Texture.class);
         assets.load("images/FishB.png", Texture.class);
         assets.load("images/FishC.png", Texture.class);
+        assets.load("images/button.png", Texture.class);
+
     }
 
     @Override
     protected Actor createSubHeader() {
-        return null;
+        return createCollectibleComparatorSelectBox();
     }
 
     @Override
     protected WidgetGroup createBody() {
+        stage.setDebugAll(true);
         body = new Table();
+        fillBody();
+        return new ScrollPane(body);
+    }
+
+    public void fillBody(){
+        body.clear();
         collectibleDrawer = new CollectibleDrawer(assets);
 
         if(client.isRemoteConnected()) {
@@ -69,7 +96,7 @@ public class CollectionScreen extends BaseMenuScreen {
             public void handleResponse(Response response) {
                 Collection collection = (Collection) response.getData();
 
-                for (Collectible collectible : collection) {
+                for (Collectible collectible : collection.sort(collectibleComparator)) {
                     Sprite sprite = collectibleDrawer.drawCollectible(collectible);
                     sprite.setSize(
                             sprite.getTexture().getWidth() / 1.2f * assets.getRatio(),
@@ -82,8 +109,6 @@ public class CollectionScreen extends BaseMenuScreen {
                 }
             }
         });
-
-        return new ScrollPane(body);
     }
 
     @Override
@@ -114,5 +139,48 @@ public class CollectionScreen extends BaseMenuScreen {
     @Override
     public void dispose() {
 
+    }
+
+    public SelectBox<Comparator<Collectible>> createCollectibleComparatorSelectBox() {
+        SelectBox<Comparator<Collectible>> box = new SelectBox<Comparator<Collectible>>(getCheckBoxStyle());
+
+        collectibleComparator = new RarityComparator();
+        collectibleSortSelectBox = new SelectBox<Comparator<Collectible>>(getCheckBoxStyle());
+        collectibleSortSelectBox.setItems(collectibleComparator, new HueComparator());
+        collectibleSortSelectBox.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.app.log("CollectionScreen sort", "Selected sort: " + collectibleSortSelectBox.getSelected());
+                collectibleComparator = collectibleSortSelectBox.getSelected();
+                fillBody();
+            }
+        });
+
+        return box;
+    }
+
+    public SelectBox.SelectBoxStyle getCheckBoxStyle() {
+        ScrollPane.ScrollPaneStyle scrollPaneStyle = new ScrollPane.ScrollPaneStyle(
+                new BaseDrawable(),
+                new BaseDrawable(),
+                new BaseDrawable(),
+                new TextureRegionDrawable(new TextureRegion((Texture) assets.get("images/button.png"))),
+                new BaseDrawable()
+        );
+
+        List.ListStyle listStyle = new List.ListStyle(
+                assets.get("white_buttonFont", BitmapFont.class),
+                Color.GREEN,
+                Color.ORANGE,
+                new BaseDrawable());
+
+        SelectBox.SelectBoxStyle selectBoxStyle = new SelectBox.SelectBoxStyle(
+                assets.get("white_buttonFont", BitmapFont.class),
+                Color.RED,
+                new TextureRegionDrawable(new TextureRegion((Texture) assets.get("images/button.png"))),
+                scrollPaneStyle,
+                listStyle);
+
+        return selectBoxStyle;
     }
 }

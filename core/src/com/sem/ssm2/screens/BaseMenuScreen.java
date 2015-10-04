@@ -183,4 +183,8 @@ public abstract class BaseMenuScreen extends GameScreen{
         inputMultiplexer.removeProcessor(stage);
         inputMultiplexer.removeProcessor(swipeDetector);
     }
+
+    public Container<Actor> getBody() {
+        return body;
+    }
 }

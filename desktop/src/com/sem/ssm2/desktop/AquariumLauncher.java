@@ -10,9 +10,12 @@ import com.sem.ssm2.screens.aquarium.Aquarium;
 public class AquariumLauncher  {
     public static void main (String[] arg) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-        config.height = 1080;
-        config.width = 1920;
-        config.fullscreen = true;
+
+        float scaleFactor = 1.5f;
+
+        config.height = (int)(1080/scaleFactor);
+        config.width = (int)(1920/scaleFactor);
+        config.fullscreen = false;
         new LwjglApplication(new Game(
                 new DesktopAccelerationStatus(),
                 new DesktopNotificationController(),
