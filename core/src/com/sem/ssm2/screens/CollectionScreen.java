@@ -2,18 +2,26 @@ package com.sem.ssm2.screens;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.sem.ssm2.Game;
 import com.sem.ssm2.server.database.Response;
 import com.sem.ssm2.server.database.ResponseHandler;
@@ -62,7 +70,7 @@ public class CollectionScreen extends BaseMenuScreen {
         assets.load("images/FishA.png", Texture.class);
         assets.load("images/FishB.png", Texture.class);
         assets.load("images/FishC.png", Texture.class);
-        assets.load("images/menuButton.png", Texture.class);
+        assets.load("images/button.png", Texture.class);
     }
 
     @Override
@@ -85,7 +93,7 @@ public class CollectionScreen extends BaseMenuScreen {
             client.synchronizeLocalCollection();
         }
 
-        menuButton = new Sprite(assets.get("images/menuButton.png", Texture.class));
+        menuButton = new Sprite(assets.get("images/button.png", Texture.class));
         menuButton.setSize(
                 menuButton.getWidth() * assets.getRatio(), menuButton.getHeight() * assets.getRatio());
         SpriteDrawable spriteDrawable = new SpriteDrawable(menuButton);
@@ -102,7 +110,7 @@ public class CollectionScreen extends BaseMenuScreen {
             public void handleResponse(Response response) {
                 Collection collection = (Collection) response.getData();
 
-                for (Collectible collectible : collection.sort(collectibleComparator)) {
+                for (final Collectible collectible : collection.sort(collectibleComparator)) {
                     Sprite sprite = collectibleDrawer.drawCollectible(collectible);
                     sprite.setSize(
                             sprite.getTexture().getWidth() / 1.2f * assets.getRatio(),
@@ -158,7 +166,6 @@ public class CollectionScreen extends BaseMenuScreen {
     }
 
     public SelectBox<Comparator<Collectible>> createCollectibleComparatorSelectBox() {
-        SelectBox<Comparator<Collectible>> box = new SelectBox<Comparator<Collectible>>(getCheckBoxStyle());
 
         collectibleComparator = new RarityComparator();
         collectibleSortSelectBox = new SelectBox<Comparator<Collectible>>(getCheckBoxStyle());
@@ -172,30 +179,32 @@ public class CollectionScreen extends BaseMenuScreen {
             }
         });
 
-        return box;
+        return collectibleSortSelectBox;
     }
 
     public SelectBox.SelectBoxStyle getCheckBoxStyle() {
-        ScrollPane.ScrollPaneStyle scrollPaneStyle = new ScrollPane.ScrollPaneStyle(
-                new BaseDrawable(),
-                new BaseDrawable(),
-                new BaseDrawable(),
-                new TextureRegionDrawable(new TextureRegion((Texture) assets.get("images/button.png"))),
-                new BaseDrawable()
-        );
-
         List.ListStyle listStyle = new List.ListStyle(
                 assets.get("white_buttonFont", BitmapFont.class),
-                Color.GREEN,
-                Color.ORANGE,
-                new BaseDrawable());
+                Color.TEAL,
+                Color.CORAL,
+                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.WHITE)))
+        );
+
+        ScrollPane.ScrollPaneStyle scrollPaneStyle = new ScrollPane.ScrollPaneStyle(
+                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.LIME))),
+                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.FOREST))),
+                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.MAGENTA))),
+                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.PURPLE))),
+                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.SLATE)))
+        );
 
         SelectBox.SelectBoxStyle selectBoxStyle = new SelectBox.SelectBoxStyle(
                 assets.get("white_buttonFont", BitmapFont.class),
-                Color.RED,
-                new TextureRegionDrawable(new TextureRegion((Texture) assets.get("images/button.png"))),
+                Color.SALMON,
+                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.BROWN))),
                 scrollPaneStyle,
-                listStyle);
+                listStyle
+        );
 
         return selectBoxStyle;
     }

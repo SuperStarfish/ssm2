@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.sem.ssm2.assets.Assets;
 import com.sem.ssm2.client.Client;
 import com.sem.ssm2.client.UserIDResolver;
-import com.sem.ssm2.screens.*;
+import com.sem.ssm2.screens.LoadingScreen;
+import com.sem.ssm2.screens.MainMenu;
+import com.sem.ssm2.screens.Screen;
 import com.sem.ssm2.server.LocalStorageResolver;
 import com.sem.ssm2.server.database.Response;
 import com.sem.ssm2.server.database.ResponseHandler;
@@ -94,7 +96,6 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
         });
 
         setScreen(startScreen);
-
     }
 
     public void setScreen(Class<? extends Screen> newScreen) {

@@ -19,6 +19,6 @@ public class HueComparator implements Comparator<Collectible> {
 
     @Override
     public String toString() {
-        return "Hue (Comparator)";
+        return "Hue";
     }
 }
