@@ -59,7 +59,7 @@ public class AddLocalCollectible extends Query {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-            }
+                            }
         }).start();
 
 

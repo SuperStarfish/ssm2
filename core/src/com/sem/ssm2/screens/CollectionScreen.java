@@ -1,7 +1,5 @@
 package com.sem.ssm2.screens;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -61,6 +59,10 @@ public class CollectionScreen extends BaseMenuScreen {
     protected WidgetGroup createBody() {
         body = new Table();
         collectibleDrawer = new CollectibleDrawer(assets);
+
+        if(client.isRemoteConnected()) {
+            client.synchronizeLocalCollection();
+        }
 
         client.getLocalCollection(new ResponseHandler() {
             @Override

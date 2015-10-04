@@ -121,7 +121,7 @@ public class Client {
         remoteConnection.send(new GetGroupData(groupId), responseHandler);
     }
 
-    public void synchronizeLocalCollection(ResponseHandler responseHandler) {
+    public void synchronizeLocalCollection() {
         final Collection collection = new Collection();
         localConnection.send(new GetUnsyncedCollection(playerData), new ResponseHandler() {
             @Override
@@ -130,6 +130,7 @@ public class Client {
             }
         });
         if(collection.size() > 0) {
+            
 //            remoteConnection.send(new AddCollection(collection), responseHandler);
         }
     }
