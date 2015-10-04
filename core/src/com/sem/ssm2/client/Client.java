@@ -12,6 +12,7 @@ import com.sem.ssm2.server.database.query.*;
 import com.sem.ssm2.structures.PlayerData;
 import com.sem.ssm2.structures.Subject;
 import com.sem.ssm2.structures.collection.Collection;
+import com.sem.ssm2.structures.collection.collectibles.Collectible;
 import com.sem.ssm2.structures.groups.GroupData;
 
 import java.util.ArrayList;
@@ -121,6 +122,15 @@ public class Client {
         remoteConnection.send(new GetGroupData(groupId), responseHandler);
     }
 
+    public void sendCollectible(final Collectible collectible, int groupId, final ResponseHandler responseHandler) {
+        remoteConnection.send(new AddRemoteCollectible(collectible, playerData.getId(), groupId), new ResponseHandler() {
+            @Override
+            public void handleResponse(Response response) {
+                localConnection.send(new RemoveCollectible(collectible), responseHandler);
+            }
+        });
+    }
+
     public void synchronizeLocalCollection() {
         final Collection collection = new Collection();
         localConnection.send(new GetUnsyncedCollection(playerData), new ResponseHandler() {
@@ -129,9 +139,16 @@ public class Client {
                 collection.addAll((Collection) response.getData());
             }
         });
+        System.out.println(collection.size());
         if(collection.size() > 0) {
-            
-//            remoteConnection.send(new AddCollection(collection), responseHandler);
+            remoteConnection.send(new AddRemoteCollection(collection, playerData.getId()), new ResponseHandler() {
+                @Override
+                public void handleResponse(Response response) {
+                    if(response.isSuccess()) {
+                        localConnection.send(new ClearUnsynced(), null);
+                    }
+                }
+            });
         }
     }
 

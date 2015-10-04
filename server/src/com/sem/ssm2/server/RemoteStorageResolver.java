@@ -21,7 +21,7 @@ public class RemoteStorageResolver extends LocalStorageResolver {
             "playerId text not null);";
 
     protected final String collectionsTable = "create table if not exists collections (ownerId text not null, " +
-            "groupId text no null, type text not null, hue float not null, amount int not null default 0, " +
+            "groupId text, type text not null, hue float not null, amount int not null default 0, " +
             "last_entry text not null, unique(ownerId, groupId, type, hue));";
 
     /**

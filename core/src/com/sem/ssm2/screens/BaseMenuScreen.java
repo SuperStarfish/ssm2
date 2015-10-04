@@ -128,7 +128,7 @@ public abstract class BaseMenuScreen extends GameScreen{
 
         body.align(Align.top);
         body.setActor(createBody());
-        body.prefWidth(Gdx.graphics.getWidth());
+        body.prefWidth(Gdx.graphics.getWidth()).maxWidth(Gdx.graphics.getWidth());
     }
 
     protected abstract Actor createSubHeader();

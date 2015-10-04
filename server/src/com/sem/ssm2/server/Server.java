@@ -119,7 +119,7 @@ public class Server {
             createServerSocket(0);
         } else {
             createServerSocket(cDefaultPort);
-            createExternalIP();
+//            createExternalIP();
 //            validateExternalConnection();
 
             initCleaner();
