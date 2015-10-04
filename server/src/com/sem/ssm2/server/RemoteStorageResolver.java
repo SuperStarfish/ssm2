@@ -20,9 +20,9 @@ public class RemoteStorageResolver extends LocalStorageResolver {
     protected final String groupMembersTable = "create table if not exists group_members (groupId integer not null, " +
             "playerId text not null);";
 
-    protected final String collectionsTable = "create table if not exists collections (id integer PRIMARY KEY AUTOINCREMENT, " +
-            "ownerId text not null, groupId text, type text not null, hue float not null, " +
-            "amount int not null default 0, last_entry text not null, unique(groupId, type, hue));";
+    protected final String collectionsTable = "create table if not exists collections (ownerId text not null, " +
+            "groupId text no null, type text not null, hue float not null, amount int not null default 0, " +
+            "last_entry text not null, unique(ownerId, groupId, type, hue));";
 
     /**
      * Query that creates an 'Event_Hosts' table, if it does not exist. This table is used primarily for remote servers

@@ -1,4 +1,4 @@
-package com.sem.ssm2.server.database.query.temp;
+package com.sem.ssm2.server.database.query;
 
 import com.sem.ssm2.server.database.query.Query;
 

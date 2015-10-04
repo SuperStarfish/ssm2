@@ -10,6 +10,7 @@ import com.sem.ssm2.android.util.AndroidAccelerationStatus;
 import com.sem.ssm2.android.util.AndroidIDResolver;
 import com.sem.ssm2.android.util.AndroidStorageResolver;
 import com.sem.ssm2.android.util.notification.AndroidNotificationController;
+import com.sem.ssm2.screens.MainMenu;
 
 import java.io.File;
 
@@ -49,7 +50,8 @@ public class AndroidLauncher extends AndroidApplication {
                     new AndroidAccelerationStatus(cSensorManager),
                     new AndroidNotificationController(this),
                     new AndroidIDResolver(getContext()),
-                    new AndroidStorageResolver()),
+                    new AndroidStorageResolver(),
+						MainMenu.class),
             config);
 	}
 }

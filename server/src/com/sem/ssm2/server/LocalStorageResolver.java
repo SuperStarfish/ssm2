@@ -22,12 +22,12 @@ public abstract class LocalStorageResolver {
             "running_time bigint default 0, number_of_strolls bigint default 0);";
 
     protected String collectionTable = "create table if not exists collection " +
-            "(key integer primary key autoincrement, type text not null, hue real not null, amount int default 1, " +
-            "last_entry datetime default (datetime('now')))";
+            "(type text not null, hue real not null, amount int default 0," +
+            "  last_entry datetime default (datetime('now')),  unique(type, hue))";
 
     protected String unsyncedCollectionTable = "create table if not exists unsynced_collection " +
-            "(key integer primary key autoincrement, type text not null, hue real not null, amount int default 1, " +
-            "last_entry datetime default (datetime('now')))";
+            "(type text not null, hue real not null, amount int default 0," +
+            "  last_entry datetime default (datetime('now')),  unique(type, hue))";
 
     /**
      * The database connection. This can be used to make queries on. Child class determines how this connection

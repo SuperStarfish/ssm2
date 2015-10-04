@@ -3,22 +3,27 @@ package com.sem.ssm2.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.sem.ssm2.Game;
 import com.sem.ssm2.stroll.Stroll;
+import com.sem.ssm2.structures.collection.collectibles.Collectible;
+import com.sem.ssm2.structures.collection.collectibles.CollectibleFactory;
+import com.sem.ssm2.util.CollectibleDrawer;
 
 public class RewardScreen extends GameScreen {
 
     protected Stage stage;
     protected Stroll stroll = game.getStroll();
+    protected CollectibleDrawer collectibleDrawer;
 
     public RewardScreen(Game game) {
         super(game);
@@ -41,11 +46,27 @@ public class RewardScreen extends GameScreen {
         stage = new Stage();
         inputMultiplexer.addProcessor(stage);
 
+        collectibleDrawer = new CollectibleDrawer(assets);
+
         Table table = new Table();
         table.setFillParent(true);
-        Label.LabelStyle labelStyle = new Label.LabelStyle(assets.get("rewardsFont", BitmapFont.class), Color.RED);
-        table.add(new Label("Rewards: " + stroll.getStrollRewards(), labelStyle));
-        table.row();
+
+        HorizontalGroup horizontalGroup = new HorizontalGroup();
+        ScrollPane scrollPane = new ScrollPane(horizontalGroup);
+        table.add(scrollPane);
+
+        for(Collectible collectible : stroll.getStrollRewards()) {
+            horizontalGroup.addActor(new Image(
+                    new SpriteDrawable(collectibleDrawer.drawCollectible(collectible))
+            ));
+        }
+
+        System.out.println(stroll.getStrollRewards());
+        client.addLocalCollection(stroll.getStrollRewards(), null);
+//
+//        if(client.isRemoteConnected()){
+//            System.out.println("");
+//        }
 
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle(
                 new BaseDrawable(),
@@ -54,6 +75,7 @@ public class RewardScreen extends GameScreen {
                 assets.get("rewardsFont", BitmapFont.class)
         );
 
+        table.row();
         TextButton textButton = new TextButton("Back", textButtonStyle);
         textButton.addListener(new ChangeListener() {
             @Override

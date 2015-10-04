@@ -120,6 +120,7 @@ public class SearchGroupScreen extends BaseMenuScreen {
     protected WidgetGroup createBody() {
         table = new Table();
         label = new Label("", labelStyle);
+        table.add(label);
         if(client.isRemoteConnected()) {
             label.setText("Getting group data");
             client.getPublicGroups(new ResponseHandler() {

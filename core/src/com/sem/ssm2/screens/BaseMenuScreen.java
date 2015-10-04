@@ -82,8 +82,8 @@ public abstract class BaseMenuScreen extends GameScreen{
     @Override
     public void show() {
         stage = new Stage();
-        inputMultiplexer.addProcessor(stage);
         inputMultiplexer.addProcessor(swipeDetector);
+        inputMultiplexer.addProcessor(stage);
 
         headerBackground = createHeaderBackground();
         subHeaderBackground = createSubHeaderBackground();

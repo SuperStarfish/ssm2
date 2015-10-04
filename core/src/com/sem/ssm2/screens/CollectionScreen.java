@@ -74,7 +74,7 @@ public class CollectionScreen extends BaseMenuScreen {
                             sprite.getTexture().getHeight() / 1.2f * assets.getRatio()
                     );
                     body.add(new Image(new SpriteDrawable(sprite)));
-                    body.add(new Label(collectible.getOwnerId(), labelStyle)).expandX();
+                    body.add(new Label("" + collectible.getRarity(), labelStyle)).expandX();
                     body.add(new Label(">", labelStyle)).pad(10);
                     body.row();
                 }

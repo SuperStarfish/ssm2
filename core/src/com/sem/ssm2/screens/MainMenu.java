@@ -227,6 +227,8 @@ public class MainMenu extends GameScreen {
     }
 
     public String formattedTime(int time) {
+        if(time < 0)
+            time = 0;
         int minutes = (int)(time / 60f);
         int seconds = time % 60;
         if(seconds < 10)

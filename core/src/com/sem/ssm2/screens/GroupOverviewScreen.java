@@ -76,6 +76,7 @@ public class GroupOverviewScreen extends BaseMenuScreen {
     protected WidgetGroup createBody() {
         table = new Table();
         label = new Label("", labelStyle);
+        table.add(label);
         if(client.isRemoteConnected()) {
             label.setText("Retrieving data from server");
             client.getGroups(new ResponseHandler() {
@@ -134,7 +135,7 @@ public class GroupOverviewScreen extends BaseMenuScreen {
                 }
             });
         } else {
-            label.setText("Not connected to the remote server");
+            label.setText("Not connected!");
         }
         return table;
     }

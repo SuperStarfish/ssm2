@@ -81,6 +81,14 @@ public class Client {
         localConnection.send(new GetLocalPlayerData(userIDResolver.getID()), responseHandler);
     }
 
+    public PlayerData getCurrentPlayerData() {
+        return playerData;
+    }
+
+    public void addLocalCollection(Collection collection, ResponseHandler responseHandler) {
+        localConnection.send(new AddCollection(collection), responseHandler);
+    }
+
     public void updateStrollTime(long millis, ResponseHandler responseHandler) {
         localConnection.send(new SetStrollTime(millis), responseHandler);
     }
@@ -391,7 +399,7 @@ public class Client {
 //                                  final ResponseHandler responseHandler) {
 //        MultiResponseHandler multiResponseHandler = new MultiResponseHandler(responseHandler, 2);
 //        cLocalConnection.send(new RemoveCollectible(collectible, getUserID()), multiResponseHandler);
-//        cRemoteConnection.send(new AddCollectible(collectible, groupId), multiResponseHandler);
+//        cRemoteConnection.send(new AddLocalCollectible(collectible, groupId), multiResponseHandler);
 //    }
 //
 //    /**
