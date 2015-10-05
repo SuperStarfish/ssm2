@@ -1,5 +1,6 @@
 package com.sem.ssm2.screens.multiplayer;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -13,8 +14,13 @@ import com.sem.ssm2.multiplayer.MessageHandler;
 import com.sem.ssm2.multiplayer.MultiPlayerHost;
 import com.sem.ssm2.screens.Screen;
 import com.sem.ssm2.screens.SimpleScreen;
+import com.sem.ssm2.screens.StrollScreen;
 import com.sem.ssm2.server.database.Response;
 import com.sem.ssm2.server.database.ResponseHandler;
+
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Random;
 
 public class HostMultiPlayerScreen extends SimpleScreen {
 
@@ -28,13 +34,21 @@ public class HostMultiPlayerScreen extends SimpleScreen {
     @Override
     public void show() {
         host = new MultiPlayerHost();
-        super.show();
-    }
+        host.getDisconnectSubject().addObserver(
+                new Observer() {
+                    @Override
+                    public void update(Observable o, Object arg) {
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                game.setScreen(StrollScreen.class);
+                            }
+                        });
 
-    @Override
-    public void hide() {
-        host.stopHosting();
-        super.hide();
+                    }
+                }
+        );
+        super.show();
     }
 
     @Override
@@ -57,12 +71,22 @@ public class HostMultiPlayerScreen extends SimpleScreen {
                 public void handleResponse(Response response) {
                     if(response.isSuccess()) {
                         label.setText("Code: " + response.getData());
-                        host.receiveTCP(new MessageHandler() {
+                        new Thread(new Runnable() {
                             @Override
-                            public void handleMessage(Object message) {
-                                System.out.println(message);
+                            public void run() {
+                                host.connect();
+                                if(host.isConnected()) {
+                                    game.setHost(host);
+                                    Gdx.app.postRunnable(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            game.setMultiPlayerScreen(FishingBoatHostScreen.class);
+                                        }
+                                    });
+
+                                }
                             }
-                        }, false);
+                        }).start();
                     }
                 }
             });

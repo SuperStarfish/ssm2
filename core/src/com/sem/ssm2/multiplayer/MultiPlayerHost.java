@@ -52,7 +52,8 @@ public class MultiPlayerHost extends Host {
     public void stopHosting() {
         try {
             cServerSocket.close();
-            cDatagramSocket.close();
+            if(cDatagramSocket != null)
+                cDatagramSocket.close();
             Gdx.app.debug("MultiplayerHost", "Closed the ServerSocket");
         } catch (IOException e) {
             e.printStackTrace();
