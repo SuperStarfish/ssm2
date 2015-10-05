@@ -1,5 +1,6 @@
 package com.sem.ssm2.screens.multiplayer;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -10,12 +11,15 @@ import com.sem.ssm2.Game;
 import com.sem.ssm2.multiplayer.MultiPlayerClient;
 import com.sem.ssm2.screens.Screen;
 import com.sem.ssm2.screens.SimpleScreen;
+import com.sem.ssm2.screens.StrollScreen;
 import com.sem.ssm2.server.database.Response;
 import com.sem.ssm2.server.database.ResponseHandler;
 import com.sem.ssm2.structures.HostData;
 import com.sem.ssm2.util.TextFieldTable;
 
 import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
 
 public class JoinMultiPlayerScreen extends SimpleScreen {
 
@@ -50,7 +54,24 @@ public class JoinMultiPlayerScreen extends SimpleScreen {
                         if(response.isSuccess()){
                             try {
                                 multiPlayerClient = new MultiPlayerClient((HostData)response.getData());
-                                multiPlayerClient.sendTCP("Test");
+                                multiPlayerClient.getDisconnectSubject().addObserver(
+                                        new Observer() {
+                                            @Override
+                                            public void update(Observable o, Object arg) {
+                                                if(!(boolean)arg) {
+                                                    Gdx.app.postRunnable(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            game.setScreen(StrollScreen.class);
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        }
+                                );
+                                multiPlayerClient.connect();
+                                game.setHost(multiPlayerClient);
+                                game.setMultiPlayerScreen(FishingBoatClientScreen.class);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

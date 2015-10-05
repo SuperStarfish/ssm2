@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.sem.ssm2.assets.Assets;
 import com.sem.ssm2.client.Client;
 import com.sem.ssm2.client.UserIDResolver;
+import com.sem.ssm2.multiplayer.Host;
 import com.sem.ssm2.screens.LoadingScreen;
 import com.sem.ssm2.screens.MainMenu;
 import com.sem.ssm2.screens.Screen;
@@ -53,6 +54,7 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
     protected boolean setPreviousScreen = false;
     protected Stroll stroll;
     protected Collectible collectible;
+    protected Host host;
 
     @Override
     public void create() {
@@ -103,6 +105,33 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
             setScreen(storedScreens.get(newScreen.getName()));
         } else {
             createNewScreen(newScreen);
+        }
+    }
+
+    public void setMultiPlayerScreen(Class<? extends Screen> newScreen) {
+        if(host != null) {
+            if (storedScreens.containsKey(newScreen.getName())) {
+                setScreen(storedScreens.get(newScreen.getName()));
+            } else {
+                createNewMultiPlayerScreen(newScreen);
+            }
+        }
+    }
+
+    protected void createNewMultiPlayerScreen(Class<? extends Screen> newScreen) {
+        try {
+            Screen screenInstance = newScreen.getDeclaredConstructor(Game.class, Host.class).newInstance(this, host);
+            screenInstance.loadAssets();
+            storedScreens.put(newScreen.getName(), screenInstance);
+            if(assets.update()) {
+                setScreen(screenInstance);
+            } else {
+                queuedScreen = screenInstance;
+                setScreen(LoadingScreen.class);
+            }
+        } catch (NoSuchMethodException | IllegalAccessException
+                | InstantiationException | InvocationTargetException e) {
+            e.printStackTrace();
         }
     }
 
@@ -210,6 +239,17 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
     public void setCollectible(Collectible collectible) {
         System.out.println(collectible.toString());
         this.collectible = collectible;
+    }
+
+    public void setHost(Host host) {
+        this.host = host;
+    }
+
+    public void resetHost() {
+        if(host != null){
+            host.dispose();
+            host = null;
+        }
     }
 
     public Collectible getCollectible() {

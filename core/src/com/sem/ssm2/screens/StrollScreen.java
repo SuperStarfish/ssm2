@@ -69,6 +69,7 @@ public class StrollScreen extends GameScreen {
 
     @Override
     public void show() {
+        game.resetHost();
         stroll = game.getStroll();
         isActive = true;
         timeSinceLastEvent = 0;
