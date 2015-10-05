@@ -11,11 +11,13 @@ public class AddRemoteCollectible extends Query {
 
     protected Collectible collectible;
     protected int groupId;
+    protected String id;
 
 
-    public AddRemoteCollectible(Collectible collectible, int groupId) {
+    public AddRemoteCollectible(Collectible collectible,String id, int groupId) {
         this.collectible = collectible;
         this.groupId = groupId;
+        this.id = id;
     }
 
     @Override
@@ -27,12 +29,12 @@ public class AddRemoteCollectible extends Query {
 
         try (PreparedStatement statement = databaseConnection.prepareStatement(query)) {
             setValues(statement,
-                    collectible.getOwnerId(),
+                    id,
                     groupId,
                     collectible.getClass().getSimpleName(),
                     collectible.getHue(),
                     collectible.getAmount(),
-                    collectible.getOwnerId(),
+                    id,
                     groupId,
                     collectible.getClass().getSimpleName(),
                     collectible.getHue()

@@ -167,7 +167,7 @@ public abstract class BaseMenuScreen extends GameScreen{
 
     private Texture createHeaderBackground() {
         Pixmap pixmap = new Pixmap(4,4, Pixmap.Format.RGBA8888);
-        pixmap.setColor(new Color(59 / 255f, 85 / 255f, 1, 1));
+        pixmap.setColor(new Color(59 / 255f, 85 / 255f, 1, .7f));
         pixmap.fill();
         Texture texture = new Texture(pixmap);
         pixmap.dispose();
@@ -176,7 +176,7 @@ public abstract class BaseMenuScreen extends GameScreen{
 
     private Texture createSubHeaderBackground() {
         Pixmap pixmap = new Pixmap(4,4, Pixmap.Format.RGBA8888);
-        pixmap.setColor(new Color(59 / 255f, 141/255f, 1, 1));
+        pixmap.setColor(new Color(59 / 255f, 141/255f, 1, .7f));
         pixmap.fill();
         Texture texture = new Texture(pixmap);
         pixmap.dispose();

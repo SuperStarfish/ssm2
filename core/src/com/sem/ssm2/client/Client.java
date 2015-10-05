@@ -143,7 +143,7 @@ public class Client {
     }
 
     public void sendCollectible(final Collectible collectible, int groupId, final ResponseHandler responseHandler) {
-        remoteConnection.send(new AddRemoteCollectible(collectible, groupId), new ResponseHandler() {
+        remoteConnection.send(new AddRemoteCollectible(collectible, getCurrentPlayerData().getId(), groupId), new ResponseHandler() {
             @Override
             public void handleResponse(Response response) {
                 localConnection.send(new RemoveCollectible(collectible), responseHandler);
@@ -164,7 +164,7 @@ public class Client {
             }
         });
         if(collection.size() > 0) {
-            remoteConnection.send(new AddRemoteCollection(collection), new ResponseHandler() {
+            remoteConnection.send(new AddRemoteCollection(collection, getCurrentPlayerData().getId()), new ResponseHandler() {
                 @Override
                 public void handleResponse(Response response) {
                     if(response.isSuccess()) {

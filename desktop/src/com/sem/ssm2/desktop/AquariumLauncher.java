@@ -11,11 +11,11 @@ public class AquariumLauncher  {
     public static void main (String[] arg) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 
-        float scaleFactor = 1.5f;
+        float scaleFactor = 1f;
 
         config.height = (int)(1080/scaleFactor);
         config.width = (int)(1920/scaleFactor);
-        config.fullscreen = false;
+        config.fullscreen = true;
         new LwjglApplication(new Game(
                 new DesktopAccelerationStatus(),
                 new DesktopNotificationController(),

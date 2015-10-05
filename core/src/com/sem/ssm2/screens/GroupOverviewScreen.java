@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
 import com.sem.ssm2.Game;
 import com.sem.ssm2.server.database.Response;
 import com.sem.ssm2.server.database.ResponseHandler;
@@ -62,7 +63,7 @@ public class GroupOverviewScreen extends BaseMenuScreen {
                 new BaseDrawable(),
                 assets.get("white_buttonFont", BitmapFont.class)
         );
-        TextButton textButton = new TextButton("+", textButtonStyle);
+        TextButton textButton = new TextButton("Create a new group", textButtonStyle);
         textButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -94,16 +95,16 @@ public class GroupOverviewScreen extends BaseMenuScreen {
                                     playerData = (PlayerData)response.getData();
                                 }
                             });
-
                             for(final GroupData group : groups) {
                                 table.row();
                                 if(playerData.getId().equals(group.getOwner())) {
-                                    table.add(new Label(Integer.toString(group.getGroupId()), labelStyle));
-                                    table.add(new Label(group.getName(), labelStyle));
+                                    table.add(new Label(Integer.toString(group.getGroupId()), labelStyle)).align(Align.left);
+                                    table.add(new Label(group.getName(), labelStyle)).align(Align.left);
                                 } else {
-                                    table.add(new Label(group.getName(), labelStyle)).colspan(2);
+                                    table.add(new Label(group.getName(), labelStyle)).colspan(2).align(Align.left);
                                 }
-                                TextButton button = new TextButton("leave", buttonStyle);
+                                TextButton button = new TextButton("Leave", assets.generateWoodenTextButtonStyle(.4f,.8f));
+
                                 button.addListener(new ChangeListener() {
                                     @Override
                                     public void changed(ChangeEvent event, Actor actor) {

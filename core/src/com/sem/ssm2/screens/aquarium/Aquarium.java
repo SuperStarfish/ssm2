@@ -12,8 +12,6 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -22,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.sem.ssm2.Game;
 import com.sem.ssm2.client.Client;
 import com.sem.ssm2.screens.GameScreen;
@@ -46,7 +45,7 @@ public class Aquarium extends GameScreen {
 
     protected Game game;
 
-    protected Table filler, layout;
+    protected Table filler, layout, container;
     protected Stage stage;
     protected CollectibleDrawer collectibleDrawer;
 
@@ -88,20 +87,19 @@ public class Aquarium extends GameScreen {
         assets.load("images/button_disabled.png", Texture.class);
         assets.load("images/button_pressed.png", Texture.class);
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 100;
+        parameter.size = 50;
         parameter.borderColor = Color.BLACK;
         parameter.borderWidth = 2;
         assets.generateFont("someFont", "fonts/NotoSans-Regular.ttf", parameter);
-        parameter.size = 124;
+        parameter.size = 70;
         parameter.borderColor = Color.BLACK;
         parameter.borderWidth = 1;
         assets.generateFont("white_buttonFont", "fonts/Blenda Script.otf", parameter);
         parameter.color = new Color(71 / 255f, 37 / 255f, 2 / 255f, 1);
-        parameter.size = 80;
+        parameter.size = 70;
         parameter.borderWidth = 0;
         assets.generateFont("brown_buttonFont", "fonts/Blenda Script.otf", parameter);
     }
-
     @Override
     public void show() {
         allFish =  new HashSet<>();
@@ -116,24 +114,28 @@ public class Aquarium extends GameScreen {
         stage = new Stage();
         inputMultiplexer.addProcessor(stage);
         collectibleDrawer = new CollectibleDrawer(assets);
+        Table background = new Table();
+        background.setBackground(new TextureRegionDrawable(new TextureRegion(createMenuBackground())));
+        stage.addActor(background);
+        container = new Table();
+        stage.addActor(container);
         filler = new Table();
         stage.addActor(filler);
         filler.setFillParent(true);
         layout = new Table();
-
-        filler.setBackground(new TextureRegionDrawable(new TextureRegion(createMenuBackground())));
+        container.setZIndex(1);
 
         filler.add(layout);
 
-        layout.add(createLabel("Ip: "));
-        layout.add(createIpTextField());
+        layout.add(createLabel("Ip: ")).align(Align.right);
+        layout.add(createIpTextField()).fill();
         layout.row();
-        layout.add(createLabel("Port: "));
-        layout.add(createPortTextField());
+        layout.add(createLabel("Port: ")).align(Align.right);
+        layout.add(createPortTextField()).fill();
         layout.row();
         layout.add(createConnectButton()).colspan(2);
         layout.row();
-        layout.add(createLabel("Group: "));
+        layout.add(createLabel("Group: ")).align(Align.right);
         layout.add(createGroupSelectBox());
 
         client.getRemoteStateChange().addObserver(new Observer() {
@@ -182,6 +184,7 @@ public class Aquarium extends GameScreen {
                 new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.BLACK))),
                 new BaseDrawable(),
                 new BaseDrawable()));
+        ipTextField.setMaxLength(15);
         return ipTextField;
     }
 
@@ -196,7 +199,7 @@ public class Aquarium extends GameScreen {
     }
 
     private TextButton createConnectButton() {
-        connectButton = new TextButton("Connect", getTextButtonStyle());
+        connectButton = new TextButton("Connect", assets.generateWoodenTextButtonStyle(.8f,.8f));
         connectButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -215,28 +218,9 @@ public class Aquarium extends GameScreen {
         });
         return connectButton;
     }
-    private TextButton.TextButtonStyle getTextButtonStyle() {
-        Texture texture = assets.get("images/button.png");
-        Sprite sprite = new Sprite(texture);
-        sprite.setSize(texture.getWidth() * assets.getRatio(), texture.getHeight() * assets.getRatio());
-
-        Sprite sprite2 = new Sprite(assets.get("images/button_pressed.png", Texture.class));
-        sprite2.setSize(texture.getWidth() * assets.getRatio(), texture.getHeight() * assets.getRatio());
-
-        Sprite disabled = new Sprite(assets.get("images/button_disabled.png", Texture.class));
-        disabled.setSize(texture.getWidth() * assets.getRatio(), texture.getHeight() * assets.getRatio());
-
-        return new TextButton.TextButtonStyle(
-                new SpriteDrawable(sprite),
-                new SpriteDrawable(sprite2),
-                new SpriteDrawable(sprite2),
-                assets.get("brown_buttonFont", BitmapFont.class)
-        );
-    }
 
     private SelectBox<GroupData> createGroupSelectBox() {
-        groupSelectBox = new SelectBox<GroupData>(getSelectBoxStyle());
-        groupSelectBox.setVisible(false);
+        groupSelectBox = new SelectBox<GroupData>(assets.generateSelectBoxStyle(1,1));
         groupSelectBox.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -245,11 +229,8 @@ public class Aquarium extends GameScreen {
                 }
                 Gdx.app.log("Aquarium group", "Selected group: " + groupSelectBox.getSelected());
                 if( groupSelectBox.getSelected() != null) {
-                    groupSelectBox.setVisible(true);
                     groupId = groupSelectBox.getSelected().getGroupId();
                     scheduledFuture = scheduler.scheduleAtFixedRate(collectionRetriever,0,3, TimeUnit.SECONDS);
-                } else {
-                    groupSelectBox.setVisible(false);
                 }
             }
         });
@@ -275,31 +256,6 @@ public class Aquarium extends GameScreen {
         }
     }
 
-    private SelectBox.SelectBoxStyle getSelectBoxStyle() {
-        List.ListStyle listStyle = new List.ListStyle(
-                assets.get("white_buttonFont", BitmapFont.class),
-                Color.TEAL,
-                Color.CORAL,
-                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.WHITE)))
-        );
-
-        ScrollPane.ScrollPaneStyle scrollPaneStyle = new ScrollPane.ScrollPaneStyle(
-                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.LIME))),
-                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.FOREST))),
-                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.MAGENTA))),
-                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.PURPLE))),
-                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.SLATE)))
-        );
-
-        return new SelectBox.SelectBoxStyle(
-                assets.get("white_buttonFont", BitmapFont.class),
-                Color.SALMON,
-                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.BROWN))),
-                scrollPaneStyle,
-                listStyle
-        );
-    }
-
     @Override
     public void render(float delta) {
         for(Fish fish : allFish) {
@@ -310,16 +266,6 @@ public class Aquarium extends GameScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act();
         stage.draw();
-    }
-
-    public void setCollection(Collection collection) {
-        if(collection != null) {
-            for(Collectible collectible : collection) {
-                Fish image = convertCollectibleToFish(collectible);
-                allFish.add(image);
-                stage.addActor(image);
-            }
-        }
     }
 
     public void updateCollection(Collection collection) {
@@ -337,7 +283,7 @@ public class Aquarium extends GameScreen {
             newSet.removeAll(allFish);
             for (Fish fish : newSet) {
                 allFish.add(fish);
-                stage.addActor(fish);
+                container.addActor(fish);
             }
         }
     }
