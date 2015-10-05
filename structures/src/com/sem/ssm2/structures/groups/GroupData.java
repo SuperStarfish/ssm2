@@ -84,7 +84,7 @@ public class GroupData implements Serializable {
 
     @Override
     public String toString() {
-        return "{" + cGroupId + ", " + cName + ", " + isPublic + ", " + cOwnerId + "}";
+        return cName;
     }
 
     /**

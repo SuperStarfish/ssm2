@@ -117,7 +117,7 @@ public class CollectionScreen extends BaseMenuScreen {
                             sprite.getTexture().getHeight() / 1.2f * assets.getRatio()
                     );
                     body.add(new Image(new SpriteDrawable(sprite)));
-                    body.add(new Label("" + collectible.getRarity(), labelStyle)).expandX();
+                    body.add(new Label("" + collectible.getClass().getSimpleName(), labelStyle)).expandX();
                     TextButton textButton = new TextButton("", clickableButton);
                     textButton.setSize(sprite.getHeight(), sprite.getHeight());
                     textButton.addListener(new ClickListener(){
