@@ -17,10 +17,14 @@ public class UpdateLocalPlayerData extends Query {
 
     @Override
     public Serializable query(Connection databaseConnection) throws SQLException {
-        String query = "update player set username = ? ";
+        String query = "update player set username = ?, walking_time = ?, running_time = ?, number_of_strolls = ?";
 
         try (PreparedStatement statement = databaseConnection.prepareStatement(query)) {
-
+            statement.setString(1, playerData.getUsername());
+            statement.setLong(2, playerData.getWalkingTime());
+            statement.setLong(3, playerData.getRunningTime());
+            statement.setInt(4, playerData.getNumberOfStrolls());
+            statement.execute();
         }
         return null;
     }

@@ -36,7 +36,7 @@ public class StrollScreen extends GameScreen {
     float elapsedTime;
     protected boolean isMoving = false;
     protected Label timerLabel;
-    protected int remainingTime = 60;
+    protected int remainingTime = 10;
 //    protected int remainingTime = 300;
     protected Stage stage;
     protected boolean isActive = false;

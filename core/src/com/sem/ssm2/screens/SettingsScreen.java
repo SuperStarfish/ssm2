@@ -11,12 +11,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.sem.ssm2.Game;
+import com.sem.ssm2.client.Client;
+import com.sem.ssm2.util.TextFieldTable;
 
 public class SettingsScreen extends BaseMenuScreen {
+
+    protected Label successLabel;
 
     public SettingsScreen(Game game) {
         super(game);
     }
+
+    protected TextFieldTable ipField, portField;
 
     @Override
     public String getScreenName() {
@@ -46,30 +52,61 @@ public class SettingsScreen extends BaseMenuScreen {
     @Override
     protected WidgetGroup createBody() {
 
-        Table extraTable = assets.generateTextField("192.168.0.1");
+        ipField = assets.generateTextField(client.getIPSettings());
+        successLabel = new Label("", labelStyle);
+        portField = assets.generateTextField(Integer.toString(client.getPortSettings()));
 
-        Table extraTable2 = assets.generateTextField("56789");
-
-
+        ipField.getInnerTextField().addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                successLabel.setText("");
+            }
+        });
+        portField.getInnerTextField().addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                successLabel.setText("");
+            }
+        });
 
         TextButton saveButton = assets.generateSimpleTextButton("Save");
         saveButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                System.out.println("STORE NEW IP ETC.");
+                String ip = ipField.getInnerTextField().getText().trim();
+                int port = -1;
+                try {
+                    port = Integer.parseInt(portField.getInnerTextField().getText().trim());
+                } catch (NumberFormatException e) {
+                    successLabel.setText("Invalid port");
+                }
+
+                if(Client.isValidIP(ip)) {
+                    if(Client.isValidPort(port)){
+                        client.setRemoteIP(ip);
+                        client.setRemotePort(port);
+                        successLabel.setText("Success!");
+                    } else {
+                        successLabel.setText("Invalid port");
+                    }
+                } else {
+                    successLabel.setText("Invalid IP");
+                }
             }
         });
 
         Table table = new Table();
         table.add(new Label("Enter an IP:", labelStyle)).padTop(100 * assets.getRatio());
         table.row();
-        table.add(extraTable);
+        table.add(ipField);
         table.row();
         table.add(new Label("Enter a Port:", labelStyle));
         table.row();
-        table.add(extraTable2);
+        table.add(portField);
         table.row();
         table.add(saveButton);
+        table.row();
+        table.add(successLabel);
         table.row();
         table.add().fillY().expandY();
         return table;
