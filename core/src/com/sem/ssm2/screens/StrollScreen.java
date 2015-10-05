@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Timer;
 import com.sem.ssm2.Game;
+import com.sem.ssm2.screens.multiplayer.FishingBoatHostScreen;
 import com.sem.ssm2.screens.multiplayer.MultiPlayerScreen;
 import com.sem.ssm2.stroll.Stroll;
 import com.sem.ssm2.util.AccelerationState;
@@ -59,6 +60,9 @@ public class StrollScreen extends GameScreen {
     public void loadAssets() {
         assets.load("images/world.png", Texture.class);
         assets.load("images/walking_guy.png", Texture.class);
+        assets.load("images/SmallFish.png", Texture.class);
+        assets.load("images/Boat.png", Texture.class);
+        assets.load("images/Crane.png", Texture.class);
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.borderWidth = 1;
         int grayScale = 50;
@@ -135,7 +139,8 @@ public class StrollScreen extends GameScreen {
         textButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.setScreen(MultiPlayerScreen.class);
+//                game.setScreen(MultiPlayerScreen.class);
+                game.setMultiPlayerScreen(FishingBoatHostScreen.class);
             }
         });
 

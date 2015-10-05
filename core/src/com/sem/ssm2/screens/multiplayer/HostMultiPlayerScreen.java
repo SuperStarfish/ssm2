@@ -20,7 +20,6 @@ import com.sem.ssm2.server.database.ResponseHandler;
 
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Random;
 
 public class HostMultiPlayerScreen extends SimpleScreen {
 
@@ -30,6 +29,7 @@ public class HostMultiPlayerScreen extends SimpleScreen {
 
     protected Label label;
     protected MultiPlayerHost host;
+
 
     @Override
     public void show() {
@@ -44,7 +44,6 @@ public class HostMultiPlayerScreen extends SimpleScreen {
                                 game.setScreen(StrollScreen.class);
                             }
                         });
-
                     }
                 }
         );

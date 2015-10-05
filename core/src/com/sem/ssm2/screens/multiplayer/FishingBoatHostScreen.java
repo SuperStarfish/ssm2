@@ -3,30 +3,27 @@ package com.sem.ssm2.screens.multiplayer;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.sem.ssm2.Game;
 import com.sem.ssm2.multiplayer.Host;
-import com.sem.ssm2.multiplayer.MessageHandler;
 import com.sem.ssm2.screens.Screen;
-import com.sem.ssm2.screens.SimpleScreen;
 import com.sem.ssm2.screens.StrollScreen;
 
-public class FishingBoatHostScreen extends SimpleScreen {
-    protected Host host;
+public class FishingBoatHostScreen extends FishingBoatEvent {
 
     public FishingBoatHostScreen(Game game, Host host) {
-        super(game);
+        super(game, host);
         this.host = host;
     }
 
     @Override
     protected WidgetGroup createBody() {
-        host.sendTCP("ping");
-        host.receiveTCP(new MessageHandler() {
-            @Override
-            public void handleMessage(Object message) {
-                System.out.println(message);
-                host.sendTCP("ping");
-            }
-        }, true);
+
+        for(int i = 0; i < allFish.length; i++) {
+            SmallFish smallFish = new SmallFish(assets, i);
+            allFish[i] = smallFish;
+            stage.addActor(smallFish);
+        }
+
         return null;
+
     }
 
     @Override
@@ -42,6 +39,12 @@ public class FishingBoatHostScreen extends SimpleScreen {
     @Override
     public void resize(int width, int height) {
 
+    }
+
+    @Override
+    public void render(float delta) {
+        updateFishes();
+        super.render(delta);
     }
 
     @Override

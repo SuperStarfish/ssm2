@@ -5,15 +5,11 @@ import com.sem.ssm2.Game;
 import com.sem.ssm2.multiplayer.Host;
 import com.sem.ssm2.multiplayer.MessageHandler;
 import com.sem.ssm2.screens.Screen;
-import com.sem.ssm2.screens.SimpleScreen;
 
-public class FishingBoatClientScreen extends SimpleScreen {
-
-    protected Host host;
+public class FishingBoatClientScreen extends FishingBoatEvent {
 
     public FishingBoatClientScreen(Game game, Host host) {
-        super(game);
-        this.host = host;
+        super(game, host);
     }
 
     @Override
@@ -24,7 +20,7 @@ public class FishingBoatClientScreen extends SimpleScreen {
                 System.out.println(message);
                 host.sendTCP("pong");
             }
-        }, true);
+        }, false);
         return null;
     }
 

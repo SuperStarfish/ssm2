@@ -20,6 +20,8 @@ import com.sem.ssm2.structures.collection.collectibles.Collectible;
 import com.sem.ssm2.util.AccelerationStatus;
 import com.sem.ssm2.util.BackButtonListener;
 import com.sem.ssm2.util.NotificationController;
+import com.sem.ssm2.util.SensorReader;
+import sun.management.Sensor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -55,6 +57,7 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
     protected Stroll stroll;
     protected Collectible collectible;
     protected Host host;
+    protected SensorReader sensorReader;
 
     @Override
     public void create() {
@@ -97,6 +100,8 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
             }
         });
 
+        sensorReader = new SensorReader();
+
         setScreen(startScreen);
     }
 
@@ -109,13 +114,13 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
     }
 
     public void setMultiPlayerScreen(Class<? extends Screen> newScreen) {
-        if(host != null) {
+//        if(host != null) {
             if (storedScreens.containsKey(newScreen.getName())) {
                 setScreen(storedScreens.get(newScreen.getName()));
             } else {
                 createNewMultiPlayerScreen(newScreen);
             }
-        }
+//        }
     }
 
     protected void createNewMultiPlayerScreen(Class<? extends Screen> newScreen) {
@@ -250,6 +255,10 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
             host.dispose();
             host = null;
         }
+    }
+
+    public SensorReader getSensorReader() {
+        return sensorReader;
     }
 
     public Collectible getCollectible() {
