@@ -13,30 +13,30 @@ import java.net.UnknownHostException;
 public class DesktopIDResolver implements UserIDResolver {
     @Override
     public String getID() {
-        InetAddress ip;
-        try {
-
-            ip = InetAddress.getLocalHost();
-
-            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
-
-            byte[] mac = network.getHardwareAddress();
-
-            StringBuilder sb = new StringBuilder();
-            sb.append("Desktop/");
-            for (int i = 0; i < mac.length; i++) {
-                sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
-            }
-            return sb.toString();
-        } catch (UnknownHostException e) {
-
-            e.printStackTrace();
-
-        } catch (SocketException e){
-
-            e.printStackTrace();
-
-        }
+//        InetAddress ip;
+//        try {
+//
+//            ip = InetAddress.getLocalHost();
+//
+//            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+//
+//            byte[] mac = network.getHardwareAddress();
+//
+//            StringBuilder sb = new StringBuilder();
+//            sb.append("Desktop/");
+//            for (int i = 0; i < mac.length; i++) {
+//                sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+//            }
+//            return sb.toString();
+//        } catch (UnknownHostException e) {
+//
+//            e.printStackTrace();
+//
+//        } catch (SocketException e){
+//
+//            e.printStackTrace();
+//
+//        }
         return "Desktop/" + System.getProperty("user.name");
     }
 }

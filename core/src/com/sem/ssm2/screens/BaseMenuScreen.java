@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -22,7 +23,7 @@ public abstract class BaseMenuScreen extends GameScreen{
 
     protected Stage stage;
     protected TextButton backButton;
-    protected Table layout, header, subHeader;
+    private Table layout, header, subHeader;
     protected Container<Actor> body;
     protected Label screenTitle;
 
@@ -30,6 +31,11 @@ public abstract class BaseMenuScreen extends GameScreen{
 
     protected TextButton.TextButtonStyle buttonStyle;
     protected Label.LabelStyle labelStyle;
+
+    protected SpriteBatch batch;
+    protected TextureRegion region;
+    protected Texture background;
+    protected static float rotation = 0, addition = 0.008f;
 
     protected SwipeDetector swipeDetector = new SwipeDetector(new SwipeDetector.DirectionListener() {
         @Override
@@ -81,15 +87,23 @@ public abstract class BaseMenuScreen extends GameScreen{
 
     @Override
     public void show() {
+        batch = new SpriteBatch();
         stage = new Stage();
         inputMultiplexer.addProcessor(swipeDetector);
         inputMultiplexer.addProcessor(stage);
+
+        createBackground();
 
         headerBackground = createHeaderBackground();
         subHeaderBackground = createSubHeaderBackground();
 
         createStyles();
         createUI();
+    }
+
+    private void createBackground() {
+        background = assets.get("images/lightrays.png", Texture.class);
+        region = new TextureRegion(background);
     }
 
     private void createStyles() {
@@ -174,8 +188,31 @@ public abstract class BaseMenuScreen extends GameScreen{
     public void render(float delta) {
         Gdx.gl.glClearColor(59 / 255f, 179 / 255f, 1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        renderBackground();
         stage.act();
         stage.draw();
+    }
+
+    public void renderBackground() {
+        if(rotation > 5f || rotation < -5f) {
+            addition = 0 - addition;
+        }
+        rotation += addition;
+
+        Gdx.gl.glClearColor(59 / 255f, 179 / 255f, 1f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        batch.begin();
+        batch.draw(region,
+                -167 * assets.getRatio(),
+                -85 * assets.getRatio(),
+                0,
+                Gdx.graphics.getHeight(),
+                background.getWidth() * assets.getRatio(),
+                background.getHeight() * assets.getRatio(),
+                1,
+                1,
+                rotation);
+        batch.end();
     }
 
     @Override

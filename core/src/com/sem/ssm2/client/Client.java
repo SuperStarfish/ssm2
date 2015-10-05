@@ -78,6 +78,15 @@ public class Client {
         localConnection.send(new GetLocalCollection(random, limit), responseHandler);
     }
 
+    public void updatePlayerData() {
+        localConnection.send(new UpdateLocalPlayerData(playerData), null);
+    }
+
+    public void getRemoteCollection(int groupId, ResponseHandler responseHandler) {
+        remoteConnection.send(new GetRemoteCollection(groupId), responseHandler);
+
+    }
+
     public void getPlayerData(ResponseHandler responseHandler) {
         localConnection.send(new GetLocalPlayerData(userIDResolver.getID()), responseHandler);
     }
@@ -143,7 +152,6 @@ public class Client {
                 collection.addAll((Collection) response.getData());
             }
         });
-        System.out.println(collection.size());
         if(collection.size() > 0) {
             remoteConnection.send(new AddRemoteCollection(collection, playerData.getId()), new ResponseHandler() {
                 @Override

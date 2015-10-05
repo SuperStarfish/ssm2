@@ -151,6 +151,8 @@ public final class ServerThread implements Runnable {
         Serializable serializable = null;
         boolean success = false;
 
+        System.out.println("Requested:" + query.getClass().getSimpleName());
+
         try {
             serializable = query.query(cDatabaseConnection);
             success = true;

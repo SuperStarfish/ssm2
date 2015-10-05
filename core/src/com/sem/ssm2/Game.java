@@ -208,6 +208,7 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
     }
 
     public void setCollectible(Collectible collectible) {
+        System.out.println(collectible.toString());
         this.collectible = collectible;
     }
 
