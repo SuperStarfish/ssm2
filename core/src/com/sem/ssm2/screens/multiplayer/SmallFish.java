@@ -43,7 +43,7 @@ public class SmallFish extends Image {
             smallFishData.setDestination(Coordinate.randomCoordinate());
         }
         setPosition(smallFishData.getPosition());
-        setRotation(smallFishData.getRotation());
+//        setRotation(smallFishData.getRotation());
     }
 
     protected void setPosition(Coordinate coordinate) {
