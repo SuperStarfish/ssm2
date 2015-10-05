@@ -5,7 +5,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -74,61 +81,53 @@ public class ViewCollectibleScreen extends BaseMenuScreen {
         client.getGroups(new ResponseHandler() {
             @Override
             public void handleResponse(Response response) {
-                if(response.isSuccess()) {
-                    ArrayList<GroupData> groupData = (ArrayList<GroupData>)response.getData();
-                    if(groupData.size() > 0) {
-                        groups = new GroupData[groupData.size()];
-                        groups = groupData.toArray(groups);
+            if(response.isSuccess()) {
+                ArrayList<GroupData> list = (ArrayList<GroupData>) response.getData();
 
-                        list = new String[groups.length];
-                        for(int i = 0; i < groups.length; i++) {
-                            list[i] = groups[i].toString();
+                    List.ListStyle listStyle = new List.ListStyle(
+                            assets.get("white_buttonFont", BitmapFont.class),
+                            Color.TEAL,
+                            Color.CORAL,
+                            new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.WHITE)))
+                    );
+
+                    ScrollPane.ScrollPaneStyle scrollPaneStyle = new ScrollPane.ScrollPaneStyle(
+                            new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.LIME))),
+                            new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.FOREST))),
+                            new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.MAGENTA))),
+                            new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.PURPLE))),
+                            new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.SLATE)))
+                    );
+
+                    SelectBox.SelectBoxStyle selectBoxStyle = new SelectBox.SelectBoxStyle(
+                            assets.get("white_buttonFont", BitmapFont.class),
+                            Color.SALMON,
+                            new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.BROWN))),
+                            scrollPaneStyle,
+                            listStyle
+                    );
+
+                    final SelectBox<GroupData> selectBox = new SelectBox<>(selectBoxStyle);
+                    selectBox.setItems(list.toArray(new GroupData[list.size()]));
+
+                    table.add(selectBox);
+                    table.row();
+                    TextButton textButton = new TextButton("Send to group", buttonStyle);;
+                    textButton.addListener(new ChangeListener() {
+                        @Override
+                        public void changed(ChangeEvent event, Actor actor) {
+                            client.sendCollectible(collectible, selectBox.getSelected().getGroupId(), new ResponseHandler(){
+                                @Override
+                                public void handleResponse(Response response) {
+                                    game.setScreen(CollectionScreen.class);
+                                }
+                            });
                         }
+                    });
+                    table.add(textButton);
 
-                        List.ListStyle listStyle = new List.ListStyle(
-                                assets.get("white_buttonFont", BitmapFont.class),
-                                Color.TEAL,
-                                Color.CORAL,
-                                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.WHITE)))
-                        );
 
-                        ScrollPane.ScrollPaneStyle scrollPaneStyle = new ScrollPane.ScrollPaneStyle(
-                                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.LIME))),
-                                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.FOREST))),
-                                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.MAGENTA))),
-                                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.PURPLE))),
-                                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.SLATE)))
-                        );
-
-                        SelectBox.SelectBoxStyle selectBoxStyle = new SelectBox.SelectBoxStyle(
-                                assets.get("white_buttonFont", BitmapFont.class),
-                                Color.SALMON,
-                                new TextureRegionDrawable(new TextureRegion(assets.generateTexture(Color.BROWN))),
-                                scrollPaneStyle,
-                                listStyle
-                        );
-
-                        final SelectBox<String> selectBox = new SelectBox<>(selectBoxStyle);
-                        selectBox.setItems(list);
-
-                        table.add(selectBox);
-                        table.row();
-                        TextButton textButton = new TextButton("Send to group", buttonStyle);;
-                        textButton.addListener(new ChangeListener() {
-                            @Override
-                            public void changed(ChangeEvent event, Actor actor) {
-                                client.sendCollectible(collectible, groups[selectBox.getSelectedIndex()].getGroupId(), new ResponseHandler(){
-                                    @Override
-                                    public void handleResponse(Response response) {
-                                        game.setScreen(CollectionScreen.class);
-                                    }
-                                });
-                            }
-                        });
-                        table.add(textButton);
-
-                    }
-                }
+            }
             }
         });
 
