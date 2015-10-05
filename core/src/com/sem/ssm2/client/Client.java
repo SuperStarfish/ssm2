@@ -31,7 +31,7 @@ public class Client {
     protected Subject remoteStateChange;
     protected ArrayList<Runnable> postRunnables;
 
-    protected String remoteIP, defaultRemoteIP = "82.169.19.191";
+    protected String remoteIP, defaultRemoteIP = "192.168.0.105";
     protected int remotePort, defaultRemotePort = 56789;
     protected PlayerData playerData;
 
