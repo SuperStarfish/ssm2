@@ -11,12 +11,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Timer;
 import com.sem.ssm2.Game;
@@ -73,6 +72,8 @@ public class MainMenu extends GameScreen {
         assets.generateFont("brown_buttonFont", "fonts/Blenda Script.otf", parameter);
         parameter.color = new Color(45/ 255f, 45/ 255f, 45/ 255f, 1);
         assets.generateFont("grey_buttonFont", "fonts/Blenda Script.otf", parameter);
+        parameter.color = Color.WHITE;
+        assets.generateFont("white_buttonFont", "fonts/Blenda Script.otf", parameter);
         assets.load("images/lightrays.png", Texture.class);
         assets.load("images/button.png", Texture.class);
         assets.load("images/button_disabled.png", Texture.class);
@@ -120,8 +121,6 @@ public class MainMenu extends GameScreen {
             }
         });
 
-        VerticalGroup group = new VerticalGroup();
-
         Texture texture = assets.get("images/button.png");
         Sprite sprite = new Sprite(texture);
         sprite.setSize(texture.getWidth() * assets.getRatio(), texture.getHeight() * assets.getRatio());
@@ -152,9 +151,6 @@ public class MainMenu extends GameScreen {
         );
 
         Label label = new Label("Super Starfish\nMania", labelStyle);
-        label.setAlignment(Align.center);
-        group.addActor(label);
-        group.padTop(40 * assets.getRatio());
 
         client.getPlayerData(new ResponseHandler() {
             @Override
@@ -213,18 +209,47 @@ public class MainMenu extends GameScreen {
         });
 
         TextButton settingsButton = new TextButton("Settings", buttonStyle);
-        collectibleButton.addListener(new ChangeListener() {
+        settingsButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-
+                game.setScreen(SettingsScreen.class);
             }
         });
 
-        group.addActor(button);
-        group.addActor(collectibleButton);
-        group.addActor(settingsButton);
-        group.setFillParent(true);
-        stage.addActor(group);
+        TextureRegion textureRegion = new TextureRegion(assets.generateTexture(Color.BLACK));
+
+        textureRegion.setRegionWidth(2);
+
+        TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle(
+                assets.get("white_buttonFont", BitmapFont.class),
+                new Color(71 / 255f, 37 / 255f, 2 / 255f, 1),
+                new TextureRegionDrawable(textureRegion),
+                new SpriteDrawable(new Sprite(assets.generateTexture(new Color(0,0,0,0.3f)))),
+                new BaseDrawable()
+        );
+
+        TextField test = new TextField("192.168.254.154", textFieldStyle);
+        test.setAlignment(Align.center);
+
+        Table extraTable = new Table();
+        extraTable.add(test).padLeft(18 * assets.getRatio())
+                .padRight(18 * assets.getRatio()).width(430 * assets.getRatio());
+        extraTable.setBackground(new SpriteDrawable(sprite));
+
+        Table table = new Table();
+        table.setFillParent(true);
+        table.add(label).padTop(100 * assets.getRatio());
+        table.row();
+        table.add(button);
+        table.row();
+        table.add(collectibleButton);
+        table.row();
+        table.add(settingsButton);
+        table.row();
+        table.add(extraTable);
+        table.row();
+        table.add().fillY().expandY();
+        stage.addActor(table);
     }
 
     public String formattedTime(int time) {

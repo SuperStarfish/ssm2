@@ -40,6 +40,7 @@ public class LoadingScreen extends GameScreen {
     @Override
     public void render(float delta) {
         if(assets.update()) {
+            assets.generateStyles();
             game.setQueuedScreen();
         } else {
             float progress = assets.getProgress();
