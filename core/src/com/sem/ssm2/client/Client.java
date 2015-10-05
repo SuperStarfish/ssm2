@@ -106,6 +106,10 @@ public class Client {
         remoteConnection.send(new GetPlayerGroups(playerData.getId()), responseHandler);
     }
 
+    public void getAllGroups(ResponseHandler responseHandler) {
+        remoteConnection.send(new GetAllGroups(), responseHandler);
+    }
+
     public void leaveGroup(GroupData groupData, ResponseHandler responseHandler) {
         remoteConnection.send(new LeaveGroup(groupData, playerData), responseHandler);
     }

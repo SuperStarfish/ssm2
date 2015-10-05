@@ -128,6 +128,30 @@ public class Aquarium extends GameScreen {
         RewardGenerator rewardGenerator = new RewardGenerator("");
         collection.add(rewardGenerator.generateCollectible(1));
         addCollection(collection);
+
+        client.getRemoteStateChange().addObserver(new Observer() {
+            @Override
+            public void update(Observable o, Object arg) {
+                if(arg != null && (boolean) arg) {
+                    Gdx.app.log("Aquarium", "Connected to a remote server.");
+                    client.getAllGroups(new ResponseHandler() {
+                        @Override
+                        public void handleResponse(Response response) {
+                            if (response.isSuccess()) {
+                                Gdx.app.log("Aquarium", "Received new groups.");
+                                groupSelectBox.clearItems();
+                                ArrayList<GroupData> list = (ArrayList<GroupData>) response.getData();
+                                System.out.println("# of groups: " + list.size());
+                                for (GroupData g : list) {
+                                    System.out.println(g);
+                                }
+                                groupSelectBox.setItems(list.toArray(new GroupData[list.size()]));
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 
     private Texture createMenuBackground() {
@@ -175,23 +199,6 @@ public class Aquarium extends GameScreen {
                     client.setRemoteIP(ip);
                     client.setRemotePort(Integer.parseInt(port));
                     client.connectToRemoteServer();
-                    client.getRemoteStateChange().addObserver(new Observer() {
-                        @Override
-                        public void update(Observable o, Object arg) {
-                            if(arg != null && (boolean) arg) {
-                                client.getGroups(new ResponseHandler() {
-                                    @Override
-                                    public void handleResponse(Response response) {
-                                        ArrayList<GroupData> list = (ArrayList<GroupData>) response.getData();
-                                        for (GroupData g : list){
-                                            System.out.println(g);
-                                        }
-                                        groupSelectBox.setItems(list.toArray(new GroupData[list.size()]));
-                                    }
-                                });
-                            }
-                        }
-                    });
                 }
             }
         });
