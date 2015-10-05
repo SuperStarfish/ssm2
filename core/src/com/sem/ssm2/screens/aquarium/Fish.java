@@ -4,7 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
+import com.sem.ssm2.structures.collection.collectibles.Collectible;
 
+import java.util.Objects;
 import java.util.Random;
 
 // TODO: Fix boundaries
@@ -19,9 +21,12 @@ public class Fish extends Image {
     // Current angle of a fish. When a fish is rotating to a next angle, this value is kept as storage.
     protected int currentAngle = 0;
 
+    protected Collectible collectible;
 
-    public Fish(SpriteDrawable sprite) {
+
+    public Fish(SpriteDrawable sprite, Collectible collectible) {
         super(sprite);
+        this.collectible = collectible;
         this.sprite = sprite.getSprite();
         currentAngle = (int) this.getRotation(); // This should happen before initializeRandomPosition()
         initializeRandomPosition();
@@ -138,4 +143,20 @@ public class Fish extends Image {
         this.setScaleY(-this.getScaleY());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Fish)) {
+            return false;
+        }
+        Fish fish = (Fish) o;
+        return Objects.equals(collectible, fish.collectible);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(collectible);
+    }
 }

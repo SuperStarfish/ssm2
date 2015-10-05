@@ -180,6 +180,10 @@ public class Client {
         remoteStateChange.update(connection.isConnected());
     }
 
+    public void disconnectRemote() {
+        remoteConnection.disconnect();
+    }
+
     public boolean isRemoteConnected() {
         return remoteConnection.isConnected();
     }

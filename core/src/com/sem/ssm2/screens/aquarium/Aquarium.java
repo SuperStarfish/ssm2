@@ -29,14 +29,18 @@ import com.sem.ssm2.screens.Screen;
 import com.sem.ssm2.server.database.Response;
 import com.sem.ssm2.server.database.ResponseHandler;
 import com.sem.ssm2.structures.collection.Collection;
-import com.sem.ssm2.structures.collection.RewardGenerator;
 import com.sem.ssm2.structures.collection.collectibles.Collectible;
 import com.sem.ssm2.structures.groups.GroupData;
 import com.sem.ssm2.util.CollectibleDrawer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class Aquarium extends GameScreen {
 
@@ -53,9 +57,13 @@ public class Aquarium extends GameScreen {
 
     protected int groupId;
 
+    protected Runnable collectionRetriever;
+    protected ScheduledExecutorService scheduler;
+    protected ScheduledFuture<?> scheduledFuture;
 
 
-    protected ArrayList<Fish> allFish;
+
+    protected HashSet<Fish> allFish;
 
 
     public Aquarium(Game game) {
@@ -96,13 +104,18 @@ public class Aquarium extends GameScreen {
 
     @Override
     public void show() {
-        allFish =  new ArrayList<>();
-
+        allFish =  new HashSet<>();
+        collectionRetriever = new Runnable() {
+            @Override
+            public void run() {
+                fillAquarium();
+            }
+        };
+        scheduler = Executors.newSingleThreadScheduledExecutor();
 
         stage = new Stage();
         inputMultiplexer.addProcessor(stage);
         collectibleDrawer = new CollectibleDrawer(assets);
-        stage.setDebugAll(true);
         filler = new Table();
         stage.addActor(filler);
         filler.setFillParent(true);
@@ -123,12 +136,6 @@ public class Aquarium extends GameScreen {
         layout.add(createLabel("Group: "));
         layout.add(createGroupSelectBox());
 
-
-        Collection collection = new Collection();
-        RewardGenerator rewardGenerator = new RewardGenerator("");
-        collection.add(rewardGenerator.generateCollectible(1));
-        addCollection(collection);
-
         client.getRemoteStateChange().addObserver(new Observer() {
             @Override
             public void update(Observable o, Object arg) {
@@ -138,20 +145,21 @@ public class Aquarium extends GameScreen {
                         @Override
                         public void handleResponse(Response response) {
                             if (response.isSuccess()) {
-                                Gdx.app.log("Aquarium", "Received new groups.");
                                 groupSelectBox.clearItems();
                                 ArrayList<GroupData> list = (ArrayList<GroupData>) response.getData();
-                                System.out.println("# of groups: " + list.size());
-                                for (GroupData g : list) {
-                                    System.out.println(g);
-                                }
+                                Gdx.app.log("Aquarium", "Received " + list.size() + " new group(s).");
                                 groupSelectBox.setItems(list.toArray(new GroupData[list.size()]));
                             }
                         }
                     });
+
+                } else if (arg != null) {
+                    groupSelectBox.clearItems();
                 }
             }
         });
+
+
     }
 
     private Texture createMenuBackground() {
@@ -194,11 +202,14 @@ public class Aquarium extends GameScreen {
             public void changed(ChangeEvent event, Actor actor) {
                 String ip = ipTextField.getText();
                 String port = portTextField.getText();
-                Gdx.app.log("Aquarium", "Connecting with: " + ip + ":" + port);
                 if (Client.isValidIP(ip)){
+                    Gdx.app.log("Aquarium", "Connecting with: " + ip + ":" + port);
+                    client.disconnectRemote();
                     client.setRemoteIP(ip);
                     client.setRemotePort(Integer.parseInt(port));
                     client.connectToRemoteServer();
+                } else {
+                    Gdx.app.log("Aquarium", "Invalid ip: " + ip);
                 }
             }
         });
@@ -225,12 +236,21 @@ public class Aquarium extends GameScreen {
 
     private SelectBox<GroupData> createGroupSelectBox() {
         groupSelectBox = new SelectBox<GroupData>(getSelectBoxStyle());
+        groupSelectBox.setVisible(false);
         groupSelectBox.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                if (scheduledFuture != null) {
+                    scheduledFuture.cancel(true);
+                }
                 Gdx.app.log("Aquarium group", "Selected group: " + groupSelectBox.getSelected());
-                groupId = groupSelectBox.getSelected().getGroupId();
-                fillAquarium();
+                if( groupSelectBox.getSelected() != null) {
+                    groupSelectBox.setVisible(true);
+                    groupId = groupSelectBox.getSelected().getGroupId();
+                    scheduledFuture = scheduler.scheduleAtFixedRate(collectionRetriever,0,3, TimeUnit.SECONDS);
+                } else {
+                    groupSelectBox.setVisible(false);
+                }
             }
         });
 
@@ -238,6 +258,21 @@ public class Aquarium extends GameScreen {
     }
 
     private void fillAquarium() {
+        client.getRemoteCollection(groupId, new ResponseHandler() {
+            @Override
+            public void handleResponse(Response response) {
+                if (response.isSuccess()){
+                    updateCollection((Collection) response.getData());
+                }
+            }
+        });
+    }
+
+    private void removeFish(HashSet<Fish> set) {
+        for (Fish fish : set) {
+            fish.remove();
+            allFish.remove(fish);
+        }
     }
 
     private SelectBox.SelectBoxStyle getSelectBoxStyle() {
@@ -277,19 +312,43 @@ public class Aquarium extends GameScreen {
         stage.draw();
     }
 
-    public void addCollection(Collection collection) {
+    public void setCollection(Collection collection) {
         if(collection != null) {
             for(Collectible collectible : collection) {
-                Sprite sprite = collectibleDrawer.drawCollectible(collectible);
-                sprite.setSize(
-                        sprite.getTexture().getWidth() / 1.5f * assets.getRatio(),
-                        sprite.getTexture().getHeight() / 1.5f * assets.getRatio()
-                );
-                Fish image = new Fish(new SpriteDrawable(sprite));
+                Fish image = convertCollectibleToFish(collectible);
                 allFish.add(image);
                 stage.addActor(image);
             }
         }
+    }
+
+    public void updateCollection(Collection collection) {
+        if(collection != null) {
+            HashSet<Fish> updateSet = new HashSet<>();
+            for (Collectible collectible : collection) {
+                Fish image = convertCollectibleToFish(collectible);
+                updateSet.add(image);
+            }
+            HashSet<Fish> oldSet = (HashSet<Fish>) allFish.clone();
+            oldSet.removeAll(updateSet);
+            removeFish(oldSet);
+
+            HashSet<Fish> newSet = (HashSet<Fish>) updateSet.clone();
+            newSet.removeAll(allFish);
+            for (Fish fish : newSet) {
+                allFish.add(fish);
+                stage.addActor(fish);
+            }
+        }
+    }
+
+    public Fish convertCollectibleToFish(Collectible collectible) {
+        Sprite sprite = collectibleDrawer.drawCollectible(collectible);
+        sprite.setSize(
+                sprite.getTexture().getWidth() / 1.5f * assets.getRatio(),
+                sprite.getTexture().getHeight() / 1.5f * assets.getRatio()
+        );
+        return new Fish(new SpriteDrawable(sprite),collectible);
     }
 
     @Override

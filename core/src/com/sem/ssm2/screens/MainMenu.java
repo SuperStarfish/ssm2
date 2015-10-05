@@ -11,7 +11,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
@@ -28,7 +31,6 @@ import com.sem.ssm2.structures.collection.collectibles.Collectible;
 import com.sem.ssm2.util.CollectibleDrawer;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class MainMenu extends GameScreen {
 
@@ -113,7 +115,7 @@ public class MainMenu extends GameScreen {
                                 sprite.getTexture().getWidth() / 1.5f * assets.getRatio(),
                                 sprite.getTexture().getHeight() / 1.5f * assets.getRatio()
                         );
-                        Fish image = new Fish(new SpriteDrawable(sprite));
+                        Fish image = new Fish(new SpriteDrawable(sprite),collectible);
                         allFish.add(image);
                         stage.addActor(image);
                     }
