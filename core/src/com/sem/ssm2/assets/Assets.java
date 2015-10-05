@@ -128,7 +128,7 @@ public class Assets extends AssetManager {
         return textFieldStyle;
     }
 
-    public Table generateTextField(String initialText) {
+    public TextFieldTable generateTextField(String initialText) {
         return new TextFieldTable(this, initialText);
     }
 

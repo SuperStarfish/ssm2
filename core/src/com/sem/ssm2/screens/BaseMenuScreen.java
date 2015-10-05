@@ -35,7 +35,7 @@ public abstract class BaseMenuScreen extends GameScreen{
     protected SpriteBatch batch;
     protected TextureRegion region;
     protected Texture background;
-    protected float rotation = 0, addition = 0.008f;
+    protected static float rotation = 0, addition = 0.008f;
 
     protected SwipeDetector swipeDetector = new SwipeDetector(new SwipeDetector.DirectionListener() {
         @Override
