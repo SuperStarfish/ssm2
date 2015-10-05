@@ -218,29 +218,21 @@ public class MainMenu extends GameScreen {
             }
         });
 
-        TextureRegion textureRegion = new TextureRegion(assets.generateTexture(Color.BLACK));
+        TextButton statsButton = new TextButton("Statistics", buttonStyle);
+        settingsButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                System.out.println("NEED SOME STATS");
+            }
+        });
 
-        textureRegion.setRegionWidth(2);
-
-        TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle(
-                assets.get("white_buttonFont", BitmapFont.class),
-                new Color(71 / 255f, 37 / 255f, 2 / 255f, 1),
-                new TextureRegionDrawable(textureRegion),
-                new SpriteDrawable(new Sprite(assets.generateTexture(new Color(0,0,0,0.3f)))),
-                new BaseDrawable()
-        );
-
-        TextField test = new TextField("192.168.254.154", textFieldStyle);
-        test.setAlignment(Align.center);
-
-        Table extraTable = new Table();
-        extraTable.add(test).padLeft(18 * assets.getRatio())
-                .padRight(18 * assets.getRatio()).width(430 * assets.getRatio());
-        extraTable.setBackground(new SpriteDrawable(sprite));
+        Table titleTable = new Table();
+        label.setAlignment(Align.center);
+        titleTable.add(label).align(Align.center);
 
         Table table = new Table();
         table.setFillParent(true);
-        table.add(label).padTop(100 * assets.getRatio());
+        table.add(titleTable).padTop(100 * assets.getRatio());
         table.row();
         table.add(button);
         table.row();
@@ -248,7 +240,7 @@ public class MainMenu extends GameScreen {
         table.row();
         table.add(settingsButton);
         table.row();
-        table.add(extraTable);
+        table.add(statsButton);
         table.row();
         table.add().fillY().expandY();
         stage.addActor(table);
@@ -327,7 +319,7 @@ public class MainMenu extends GameScreen {
 
     @Override
     public void resume() {
-
+        remainingTime = minTimeElapsed - playerdata.getElapsedTime();
     }
 
     @Override

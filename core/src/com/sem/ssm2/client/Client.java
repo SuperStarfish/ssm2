@@ -78,8 +78,8 @@ public class Client {
         localConnection.send(new GetLocalCollection(random, limit), responseHandler);
     }
 
-    public void updatePlayerData() {
-        localConnection.send(new UpdateLocalPlayerData(playerData), null);
+    public void updatePlayerData(ResponseHandler responseHandler) {
+        localConnection.send(new UpdateLocalPlayerData(playerData), responseHandler);
     }
 
     public void getRemoteCollection(int groupId, ResponseHandler responseHandler) {
