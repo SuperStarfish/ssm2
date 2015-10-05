@@ -10,7 +10,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
@@ -48,9 +50,14 @@ public class Assets extends AssetManager {
 
     protected void loadDefaults() {
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 50;
+        parameter.borderColor = Color.BLACK;
+        parameter.borderWidth = 2;
+        generateFont("someFont", "fonts/NotoSans-Regular.ttf", parameter);
         parameter.color = new Color(71 / 255f, 37 / 255f, 2 / 255f, 1);
         parameter.size = 80;
         generateFont("brown_buttonFont", "fonts/Blenda Script.otf", parameter);
+        parameter.size = 60;
         parameter.color = Color.WHITE;
         generateFont("white_buttonFont", "fonts/Blenda Script.otf", parameter);
         parameter.borderWidth = 1;
@@ -125,6 +132,62 @@ public class Assets extends AssetManager {
                 new BaseDrawable(),
                 get("white_buttonFontBordered", BitmapFont.class)
         );
+    }
+
+    public TextButton.TextButtonStyle generateWoodenTextButtonStyle(float xScale, float yScale) {
+        Texture texture = get("images/button.png");
+        Sprite sprite = new Sprite(texture);
+        sprite.setSize(texture.getWidth() * getRatio() * xScale, texture.getHeight() * getRatio() * yScale);
+
+        Sprite sprite2 = new Sprite(get("images/button_pressed.png", Texture.class));
+        sprite2.setSize(texture.getWidth() * getRatio() * xScale, texture.getHeight() * getRatio() * yScale);
+
+        Sprite disabled = new Sprite(get("images/button_disabled.png", Texture.class));
+        disabled.setSize(texture.getWidth() * getRatio() * xScale, texture.getHeight() * getRatio() * yScale);
+
+        return new TextButton.TextButtonStyle(
+                new SpriteDrawable(sprite),
+                new SpriteDrawable(sprite2),
+                new SpriteDrawable(sprite2),
+                get("brown_buttonFont", BitmapFont.class)
+        );
+    }
+
+    public SelectBox.SelectBoxStyle generateSelectBoxStyle(float xScale, float yScale) {
+        Texture texture = get("images/button.png");
+        Sprite sprite = new Sprite(texture);
+        sprite.setSize(texture.getWidth() * getRatio() * xScale, texture.getHeight() * getRatio() * yScale);
+
+        Sprite sprite2 = new Sprite(get("images/button_pressed.png", Texture.class));
+        sprite2.setSize(texture.getWidth() * getRatio() * xScale, texture.getHeight() * getRatio() * yScale);
+
+        Sprite disabled = new Sprite(get("images/button_disabled.png", Texture.class));
+        disabled.setSize(texture.getWidth() * getRatio() * xScale, texture.getHeight() * getRatio() * yScale);
+
+        List.ListStyle listStyle = new List.ListStyle(
+                get("someFont", BitmapFont.class),
+                Color.GRAY,
+                Color.WHITE,
+                new TextureRegionDrawable(new TextureRegion(generateTexture(new Color(0,0,0,.4f))))
+        );
+
+        ScrollPane.ScrollPaneStyle scrollPaneStyle = new ScrollPane.ScrollPaneStyle(
+                new TextureRegionDrawable(new TextureRegion(generateTexture(new Color(1,1,1,.7f)))),
+                new BaseDrawable(),
+                new BaseDrawable(),
+                new BaseDrawable(),
+                new BaseDrawable()
+        );
+
+        SelectBox.SelectBoxStyle selectBoxStyle = new SelectBox.SelectBoxStyle(
+                get("someFont", BitmapFont.class),
+                Color.WHITE,
+                new BaseDrawable(),
+                scrollPaneStyle,
+                listStyle
+        );
+
+        return selectBoxStyle;
     }
 
     public TextButton generateSimpleTextButton(String text) {

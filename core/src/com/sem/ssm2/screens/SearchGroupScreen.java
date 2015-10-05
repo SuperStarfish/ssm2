@@ -135,7 +135,7 @@ public class SearchGroupScreen extends BaseMenuScreen {
                             for(final GroupData group : groups) {
                                 table.row();
                                 table.add(new Label(group.getName(), labelStyle));
-                                TextButton textButton = new TextButton("Join", buttonStyle);
+                                TextButton textButton = new TextButton("Join", assets.generateWoodenTextButtonStyle(.4f,.8f));
                                 textButton.addListener(new ChangeListener() {
                                     @Override
                                     public void changed(ChangeEvent event, Actor actor) {

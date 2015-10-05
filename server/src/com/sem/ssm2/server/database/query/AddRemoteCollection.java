@@ -11,18 +11,18 @@ import java.sql.SQLException;
 public class AddRemoteCollection extends Query {
 
     protected Collection collection;
-    protected String playerId;
+    protected String id;
 
-    public AddRemoteCollection(Collection collection, String playerId) {
+    public AddRemoteCollection(Collection collection, String id) {
         this.collection = collection;
-        this.playerId = playerId;
+        this.id = id;
     }
 
     @Override
     public Serializable query(Connection databaseConnection) throws SQLException {
 
         for (Collectible collectible : collection) {
-            new AddRemoteCollectible(collectible, playerId, -1).query(databaseConnection);
+            new AddRemoteCollectible(collectible, id, -1).query(databaseConnection);
         }
 
         return null;
