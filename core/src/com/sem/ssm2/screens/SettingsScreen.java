@@ -1,14 +1,11 @@
 package com.sem.ssm2.screens;
 
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
-import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.sem.ssm2.Game;
 import com.sem.ssm2.client.Client;
@@ -83,8 +80,10 @@ public class SettingsScreen extends BaseMenuScreen {
 
                 if(Client.isValidIP(ip)) {
                     if(Client.isValidPort(port)){
+                        client.disconnectRemote();
                         client.setRemoteIP(ip);
                         client.setRemotePort(port);
+                        client.connectToRemoteServer();
                         successLabel.setText("Success!");
                     } else {
                         successLabel.setText("Invalid port");
