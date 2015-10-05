@@ -9,11 +9,15 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Timer;
 import com.sem.ssm2.Game;
+import com.sem.ssm2.screens.multiplayer.MultiPlayerScreen;
 import com.sem.ssm2.stroll.Stroll;
 import com.sem.ssm2.util.AccelerationState;
 
@@ -126,9 +130,19 @@ public class StrollScreen extends GameScreen {
             }, 1, 1);
         }
 
+        TextButton textButton = assets.generateSimpleTextButton("Multiplayer");
+        textButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(MultiPlayerScreen.class);
+            }
+        });
+
         Table table = new Table();
         table.setFillParent(true);
         table.add(timerLabel).top().padTop(40 * assets.getRatio());
+        table.row();
+        table.add(textButton).padTop(100 * assets.getRatio());
         table.row();
         table.add().fill().expand();
         table.row();

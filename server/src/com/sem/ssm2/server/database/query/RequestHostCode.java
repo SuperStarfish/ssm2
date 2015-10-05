@@ -1,6 +1,4 @@
-package com.sem.ssm2.server.database.query.temp;
-
-import com.sem.ssm2.server.database.query.Query;
+package com.sem.ssm2.server.database.query;
 
 import java.io.Serializable;
 import java.sql.Connection;

@@ -37,4 +37,9 @@ public class HostData implements Serializable {
     public int getcPort() {
         return cPort;
     }
+
+    @Override
+    public String toString() {
+        return cIp + ":" + cPort;
+    }
 }

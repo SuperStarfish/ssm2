@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -29,6 +30,7 @@ public class Assets extends AssetManager {
 
     protected TextField.TextFieldStyle textFieldStyle;
     protected TextButton.TextButtonStyle simpleTextButtonStyle;
+    protected Label.LabelStyle labelStyle;
 
     public Assets() {
         ratio = Gdx.graphics.getHeight() / DEV_HEIGHT;
@@ -50,6 +52,7 @@ public class Assets extends AssetManager {
         parameter.size = 80;
         generateFont("brown_buttonFont", "fonts/Blenda Script.otf", parameter);
         parameter.color = Color.WHITE;
+        generateFont("white_buttonFont", "fonts/Blenda Script.otf", parameter);
         parameter.borderWidth = 1;
         parameter.borderColor = Color.BLACK;
         generateFont("white_buttonFontBordered", "fonts/Blenda Script.otf", parameter);
@@ -89,8 +92,30 @@ public class Assets extends AssetManager {
 
             simpleTextButtonStyle = generateSimpleTextButtonStyle();
             textFieldStyle = generateTextFieldStyle();
-
+            labelStyle = generateLabelStyle();
         }
+    }
+
+    protected Label.LabelStyle generateLabelStyle() {
+        return generateLabelStyle(Color.WHITE);
+    }
+
+    protected Label.LabelStyle generateLabelStyle(Color color) {
+        return new Label.LabelStyle(
+                get("white_buttonFont", BitmapFont.class),
+                color
+        );
+    }
+
+    public Label generateLabel(String text) {
+        return generateLabel(text, null);
+    }
+
+    public Label generateLabel(String text, Color color) {
+        if(color == null)
+            return new Label(text, labelStyle);
+        else
+            return new Label(text, generateLabelStyle(color));
     }
 
     protected TextButton.TextButtonStyle generateSimpleTextButtonStyle() {
@@ -103,7 +128,7 @@ public class Assets extends AssetManager {
     }
 
     public TextButton generateSimpleTextButton(String text) {
-        return new TextButton("Save", simpleTextButtonStyle);
+        return new TextButton(text, simpleTextButtonStyle);
     }
 
     protected TextField.TextFieldStyle generateTextFieldStyle() {

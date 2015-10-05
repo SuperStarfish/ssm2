@@ -28,7 +28,7 @@ public class RemoteStorageResolver extends LocalStorageResolver {
      * Query that creates an 'Event_Hosts' table, if it does not exist. This table is used primarily for remote servers
      * to connect two clients with each other.
      */
-    protected final String eventHostsTable = "CREATE TABLE IF NOT EXISTS 'Event_Hosts' (Code SMALLINT PRIMARY KEY NOT NULL, "
+    protected final String eventHostsTable = "CREATE TABLE IF NOT EXISTS 'Event_Hosts' (Code INTEGER PRIMARY KEY NOT NULL, "
             + "Ip TEXT NOT NULL, Port INTEGER NOT NULL, Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP);";
 
     @Override

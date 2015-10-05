@@ -43,11 +43,11 @@ public class AddRemoteCollectible extends Query {
             statement.execute();
         }
 
-        query = "update collection set amount = amount - 1 where ownerId = ? and type = ? and hue = ?";
+        query = "update collections set amount = amount - 1 where ownerId = ? and type = ? and hue = ?";
 
-        String getQuery = "select amount from collection where ownerId = ? and type = ? and hue = ?";
+        String getQuery = "select amount from collections where ownerId = ? and type = ? and hue = ?";
 
-        String deleteQuery = "delete from collection where ownerId = ? and type = ? and hue = ?";
+        String deleteQuery = "delete from collections where ownerId = ? and type = ? and hue = ?";
 
         try (PreparedStatement statement = databaseConnection.prepareStatement(query)) {
             statement.setString(1, playerId);

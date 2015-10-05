@@ -15,7 +15,11 @@ import com.sem.ssm2.structures.collection.Collection;
 import com.sem.ssm2.structures.collection.collectibles.Collectible;
 import com.sem.ssm2.structures.groups.GroupData;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Client {
 
@@ -82,9 +86,12 @@ public class Client {
         localConnection.send(new UpdateLocalPlayerData(playerData), responseHandler);
     }
 
+    public void getHostData(String code, ResponseHandler responseHandler) {
+        remoteConnection.send(new RequestHostData(code), responseHandler);
+    }
+
     public void getRemoteCollection(int groupId, ResponseHandler responseHandler) {
         remoteConnection.send(new GetRemoteCollection(groupId), responseHandler);
-
     }
 
     public void getPlayerData(ResponseHandler responseHandler) {
@@ -142,6 +149,10 @@ public class Client {
                 localConnection.send(new RemoveCollectible(collectible), responseHandler);
             }
         });
+    }
+
+    public void requestHostCode(int port, ResponseHandler responseHandler) {
+        remoteConnection.send(new RequestHostCode(getIPAddress(true), port), responseHandler);
     }
 
     public void synchronizeLocalCollection() {
@@ -298,6 +309,48 @@ public class Client {
     public void pingRemote(ResponseHandler handler) {
         remoteConnection.send(new Ping(), handler);
     }
+
+    /**
+     * Found implementation.
+     * Android returns 127.0.0.1 for Inet4Address.getLocalHost().getHostName(), so using a method found at:
+     * http://stackoverflow.com/questions/6064510/how-to-get-ip-address-of-the-device
+     *
+     * @param useIPv4 boolean whether or not to use IPv4.
+     *                +    * @return String representing the IP address.
+     */
+    public static String getIPAddress(boolean useIPv4) {
+        try {
+            List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface intf : interfaces) {
+                List<InetAddress> addrs = Collections.list(intf.getInetAddresses());
+                for (InetAddress addr : addrs) {
+                    if (!addr.isLoopbackAddress()) {
+                        String sAddr = addr.getHostAddress().toUpperCase();
+                        boolean isIPv4 = isValidIP(sAddr);
+                        if (useIPv4) {
+                            if (isIPv4) {
+                                return sAddr;
+                            }
+                        } else {
+                            if (!isIPv4) {
+                                int delim = sAddr.indexOf('%'); // drop ip6 port suffix
+                                String ip;
+                                if (delim < 0) {
+                                    ip = sAddr;
+                                } else {
+                                    ip = sAddr.substring(0, delim);
+                                }
+                                return ip;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+        } // for now eat exceptions
+        return "";
+    }
+
 }
 
 //
@@ -591,6 +644,6 @@ public class Client {
 //     * @param responseHandler The task to execute once a reply is received completed.
 //     */
 //    public void getHost(final Integer code, final ResponseHandler responseHandler) {
-//        cRemoteConnection.send(new RequestHostIp(code), responseHandler);
+//        cRemoteConnection.send(new RequestHostData(code), responseHandler);
 //    }
 //
